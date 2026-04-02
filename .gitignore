@@ -1,0 +1,34 @@
+# Xcode
+*.xcuserstate
+*.xcuserdata
+xcuserdata/
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# CocoaPods
+Pods/
+
+# SPM
+*.resolved
+
+# Build
+DerivedData/
+Build/
+
+# WhisperWrapper submodule
+WhisperWrapper/whisper.cpp/
+
+# Sample videos (large files)
+Resources/SampleVideos/
+
+# OS
+.DS_Store
+*.swp
+*~
+
+# Local settings
+.claude/settings.local.json

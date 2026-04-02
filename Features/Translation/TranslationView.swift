@@ -1,0 +1,239 @@
+import SwiftUI
+import UniformTypeIdentifiers
+
+struct TranslationView: View {
+    @StateObject private var translationManager = TranslationTaskManager.shared
+    @State private var showSubtitlePicker = false
+    @State private var selectedTaskID: UUID?
+
+    private var selectedTask: TranslationTask? {
+        translationManager.tasks.first { $0.id == selectedTaskID }
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                // 字幕翻译区域
+                Section {
+                    Button(action: { showSubtitlePicker = true }) {
+                        HStack {
+                            Image(systemName: "doc.text")
+                                .foregroundColor(.orange)
+                            Text("选择字幕文件翻译")
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                } header: {
+                    Text("字幕翻译")
+                } footer: {
+                    Text("选择 SRT、ASS 格式字幕文件，翻译为中文")
+                }
+
+                // 翻译任务列表
+                if !translationManager.tasks.isEmpty {
+                    Section {
+                        ForEach(translationManager.tasks) { task in
+                            TranslationTaskRowView(task: task)
+                                .onTapGesture {
+                                    selectedTaskID = task.id
+                                }
+                                .swipeActions(edge: .trailing) {
+                                    Button(role: .destructive) {
+                                        translationManager.deleteTask(task.id)
+                                    } label: {
+                                        Label("删除", systemImage: "trash")
+                                    }
+                                }
+                                .swipeActions(edge: .leading) {
+                                    if task.status == .inProgress {
+                                        Button {
+                                            translationManager.cancelTask(task.id)
+                                        } label: {
+                                            Label("取消", systemImage: "xmark")
+                                        }
+                                        .tint(.orange)
+                                    }
+                                }
+                        }
+                    } header: {
+                        HStack {
+                            Text("翻译任务")
+                            Spacer()
+                            Menu {
+                                Button("清空已完成", role: .destructive) {
+                                    translationManager.clearFinishedTasks()
+                                }
+                            } label: {
+                                Image(systemName: "ellipsis.circle")
+                            }
+                        }
+                    }
+                }
+
+                // 空状态
+                if translationManager.tasks.isEmpty {
+                    Section {
+                        VStack(spacing: 16) {
+                            Image(systemName: "character.bubble")
+                                .font(.system(size: 50))
+                                .foregroundColor(.secondary)
+
+                            Text("暂无翻译任务")
+                                .font(.headline)
+                                .foregroundColor(.secondary)
+
+                            Text("选择字幕文件开始翻译")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 40)
+                    }
+                }
+            }
+            .navigationTitle("翻译")
+            .sheet(isPresented: Binding(
+                get: { selectedTask != nil },
+                set: { if !$0 { selectedTaskID = nil } }
+            )) {
+                if let task = selectedTask {
+                    TranslationTaskDetailView(task: task)
+                }
+            }
+            .sheet(isPresented: $showSubtitlePicker) {
+                SubtitlePickerView { url in
+                    translationManager.startTranslation(sourcePath: url.path, entryCount: 0)
+                    showSubtitlePicker = false
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Translation Task Row
+
+struct TranslationTaskRowView: View {
+    let task: TranslationTask
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text(task.sourcePath.split(separator: "/").last.map(String.init) ?? "字幕文件")
+                    .font(.headline)
+                    .lineLimit(1)
+
+                Spacer()
+
+                statusBadge
+            }
+
+            if task.status == .inProgress {
+                ProgressView(value: task.progress)
+                    .progressViewStyle(.linear)
+            }
+
+            Text(task.statusMessage)
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+        .padding(.vertical, 4)
+    }
+
+    @ViewBuilder
+    private var statusBadge: some View {
+        switch task.status {
+        case .queued:
+            Label("排队中", systemImage: "clock")
+                .font(.caption)
+                .foregroundColor(.orange)
+        case .inProgress:
+            Label("翻译中", systemImage: "character.bubble")
+                .font(.caption)
+                .foregroundColor(.blue)
+        case .completed:
+            Label("已完成", systemImage: "checkmark.circle.fill")
+                .font(.caption)
+                .foregroundColor(.green)
+        case .failed:
+            Label("失败", systemImage: "xmark.circle.fill")
+                .font(.caption)
+                .foregroundColor(.red)
+        case .cancelled:
+            Label("已取消", systemImage: "minus.circle")
+                .font(.caption)
+                .foregroundColor(.gray)
+        }
+    }
+}
+
+// MARK: - Translation Task Detail
+
+struct TranslationTaskDetailView: View {
+    let task: TranslationTask
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("状态") {
+                    LabeledContent("任务状态", value: task.status.rawValue)
+                    LabeledContent("创建时间", value: task.createdAt.formatted())
+                    if let completedAt = task.completedAt {
+                        LabeledContent("完成时间", value: completedAt.formatted())
+                    }
+                }
+
+                if task.status == .failed, let error = task.errorMessage {
+                    Section("错误信息") {
+                        Text(error)
+                            .foregroundColor(.red)
+                    }
+                }
+
+                if task.status == .inProgress {
+                    Section("进度") {
+                        VStack(alignment: .leading, spacing: 8) {
+                            ProgressView(value: task.progress)
+                                .tint(.cyan)
+                            Text(task.statusMessage)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+
+                if task.status == .completed, let resultPath = task.resultPath {
+                    Section("结果") {
+                        Text(resultPath)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+
+                        ShareLink(item: URL(fileURLWithPath: resultPath)) {
+                            HStack {
+                                Image(systemName: "square.and.arrow.up")
+                                    .foregroundColor(.blue)
+                                Text("分享/下载字幕")
+                                Spacer()
+                            }
+                        }
+                    }
+                }
+            }
+            .navigationTitle("翻译任务")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("完成") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+    }
+}
+
+#Preview {
+    TranslationView()
+}

@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xcodegen generate:*)",
+      "Bash(xcodebuild -project SpeakingEnglish.xcodeproj -scheme SpeakingEnglish -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build)",
+      "Bash(ls -la *.srt)",
+      "Read(//Users/h2ocean/Library/Developer/Xcode/DerivedData/**)",
+      "Bash(ls -la /Users/h2ocean/Library/Developer/Xcode/DerivedData/SpeakingEnglish-*/Build/Products/Debug-iphonesimulator/SpeakingEnglish.app/SampleVideos/)",
+      "WebFetch(domain:minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com)",
+      "WebSearch",
+      "Bash(python3 Scripts/convert_cedict.py)",
+      "Bash(python3 -c ':*)",
+      "Bash(curl -s \"https://api.dictionaryapi.dev/api/v2/entries/en/are\")",
+      "Read(//Users/h2ocean/IdeaProjects/2026/VideoCaptioner/**)"
+    ]
+  }
+}

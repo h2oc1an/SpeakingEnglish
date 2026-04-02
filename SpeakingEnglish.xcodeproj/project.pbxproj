@@ -1,0 +1,850 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		06C32F9AA992356D263C8C57 /* for-tests-ggml-tiny.en.bin in Resources */ = {isa = PBXBuildFile; fileRef = 9C93978C82414F1969C4B142 /* for-tests-ggml-tiny.en.bin */; };
+		07771CEA93219C4B584097ED /* convert-h5-to-ggml.py in Resources */ = {isa = PBXBuildFile; fileRef = EC60783FC4EB5621FD95D54A /* convert-h5-to-ggml.py */; };
+		0A248C32A980535E79A80464 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5FCD5BC9B447BF93A2E14D3D /* Assets.xcassets */; };
+		0B9A9E9D95BE78106016691A /* VideoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5858AA65DA5330D6007EEC21 /* VideoService.swift */; };
+		0D15C2F7FBACBB6EE40FAD09 /* for-tests-ggml-tiny.bin in Resources */ = {isa = PBXBuildFile; fileRef = 7C4F1CD1894CF3469A03F8FF /* for-tests-ggml-tiny.bin */; };
+		0D84DED286D39FDC47C4822A /* VocabularyEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4914F50282EC447096156B4 /* VocabularyEntry.swift */; };
+		0DDE01F5E6C86A48702C718A /* download-ggml-model.cmd in Resources */ = {isa = PBXBuildFile; fileRef = BDB77969190870C47EE021D3 /* download-ggml-model.cmd */; };
+		14F74821018DC11FDC241807 /* ReviewRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282CE5E688D15B323FDA77DB /* ReviewRecord.swift */; };
+		190B50B393B45D00486D397F /* StopWords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57B313BBABBF63F92CD03DA5 /* StopWords.swift */; };
+		1D86076C556B470AF850BB74 /* SM2Algorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18DC5DB27CF36914C52B2A51 /* SM2Algorithm.swift */; };
+		1DA401A4EFBE23990ACB7C7C /* WordExtractionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918C830A5A18A3AAD07437A3 /* WordExtractionService.swift */; };
+		2168423B201C6A25B3218F1C /* SampleVideos in Resources */ = {isa = PBXBuildFile; fileRef = C43F081F7AE199B9D22C2A49 /* SampleVideos */; };
+		255075113D474F158A9124B0 /* VideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58BE2101C8CA0D31CBB3E772 /* VideoPlayerView.swift */; };
+		25C5E27C059E695F3EBB873D /* Word.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012E1A6FC7E28B7D8D1CD82D /* Word.swift */; };
+		25F5AEEB0766A6BEC6BF1F30 /* VocabularyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3101DB7E098A3CB55647A60B /* VocabularyService.swift */; };
+		2652868D0CFD2BB6C6C9742D /* SpeakingEnglishApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E704B0CC6DC82C61E031C9 /* SpeakingEnglishApp.swift */; };
+		2787C2311540DDCF19960DA5 /* String+WordProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EC8AD8998FB13B0AB7C80EC /* String+WordProcessing.swift */; };
+		2A1CDBE5944E83EA348A6B32 /* requirements-openvino.txt in Resources */ = {isa = PBXBuildFile; fileRef = FA13396DF3C24C8882D0D264 /* requirements-openvino.txt */; };
+		2C04DE947C6CD7BF2C4CD4D8 /* generate-coreml-model.sh in Resources */ = {isa = PBXBuildFile; fileRef = E2D453612AAD21FAE46DC252 /* generate-coreml-model.sh */; };
+		2EB446432CCEA57CB33A782F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A847697021C354317B4E7C /* ContentView.swift */; };
+		30E0DD5B105D7F333D24164B /* WordDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DAF20C234FD017F52E595EF /* WordDetailView.swift */; };
+		327E0C62CBD333940FB78014 /* VocabularyRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D588E73378FD03EAA7BAC8C /* VocabularyRepository.swift */; };
+		346FD21032FD95C7ECBCF6AE /* for-tests-ggml-base.en.bin in Resources */ = {isa = PBXBuildFile; fileRef = 608775FD31563DCA52D76E05 /* for-tests-ggml-base.en.bin */; };
+		34AE291E2D7C41E6C806F6C3 /* requirements-coreml.txt in Resources */ = {isa = PBXBuildFile; fileRef = A397ABB71474E80A49FB147D /* requirements-coreml.txt */; };
+		361899DCC1A2B463F678B6AA /* ggml_to_pt.py in Resources */ = {isa = PBXBuildFile; fileRef = FB5271685FD474F34F0B756A /* ggml_to_pt.py */; };
+		39E01E6E75C68E84C58043B2 /* for-tests-ggml-small.bin in Resources */ = {isa = PBXBuildFile; fileRef = 579C18A289C47FB17BB8E09E /* for-tests-ggml-small.bin */; };
+		3E7CB136D5A288CF9747FBD2 /* TranslationTaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D881FE853A00A0297FDA3D4 /* TranslationTaskManager.swift */; };
+		431675DCD6525CDF75641073 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = EA1F3D54D620584B9193468E /* SQLite */; };
+		47E2B87060E98906795B87A8 /* MelSpectrogram.mlmodelc in Resources */ = {isa = PBXBuildFile; fileRef = 38D233C6D534532F00B980A0 /* MelSpectrogram.mlmodelc */; };
+		4A30CEDAFF4F135F52BDD5DA /* for-tests-ggml-large.bin in Resources */ = {isa = PBXBuildFile; fileRef = F4528BAE5C2281C3D7631DDD /* for-tests-ggml-large.bin */; };
+		4ACEEC29AD60C553F11C7D01 /* for-tests-ggml-base.bin in Resources */ = {isa = PBXBuildFile; fileRef = 16F61912B231B2B4A6D5371C /* for-tests-ggml-base.bin */; };
+		4BCB15A53F833740E35100FB /* generation_config.json in Resources */ = {isa = PBXBuildFile; fileRef = A9CE4A99FC91A9C44C62E430 /* generation_config.json */; };
+		5251FFA42D2A46DA09398FF4 /* VideoRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F7BEC27939CAE10F14813D /* VideoRepository.swift */; };
+		55C712931B4058D7D21B4249 /* SRTSubtitleParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59964778518FC8BAC36C8CFD /* SRTSubtitleParser.swift */; };
+		5787AE644736607D818324A4 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 873D0D0DE1C49BF729927325 /* DocumentPicker.swift */; };
+		59B7D95BCDAF52A5B8F09584 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 1492A4F02CD80F328F602AD3 /* .gitignore */; };
+		59FD562B5E35E9E8687D3BA0 /* download-vad-model.cmd in Resources */ = {isa = PBXBuildFile; fileRef = F18111ACC3137E0210F33BBF /* download-vad-model.cmd */; };
+		5A582CF8909DE60127F5D803 /* DictionaryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78119344490163EE5D54394D /* DictionaryService.swift */; };
+		6330D1399C4178DFC98233D7 /* generate-coreml-interface.sh in Resources */ = {isa = PBXBuildFile; fileRef = 4CE074CF13888B013514104D /* generate-coreml-interface.sh */; };
+		649D65410474EE524174DB09 /* download-ggml-model.sh in Resources */ = {isa = PBXBuildFile; fileRef = 2E50044786F11E80263062EC /* download-ggml-model.sh */; };
+		64E3953FE5342C41D6698EDD /* WhisperKit in Frameworks */ = {isa = PBXBuildFile; productRef = 1460601EC9324E39AB71AFCB /* WhisperKit */; };
+		661FA207017348F1169AB3D9 /* for-tests-ggml-medium.en.bin in Resources */ = {isa = PBXBuildFile; fileRef = ED437D9F98D432890215F398 /* for-tests-ggml-medium.en.bin */; };
+		6639B658F97612E5F52C7DC0 /* TranscriptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E326964E410A96A74C485C3 /* TranscriptionViewModel.swift */; };
+		6A11E542C42BB3C47F777A96 /* UploadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70EBCA889B44AB7C430BB6A /* UploadService.swift */; };
+		6E7D07A53A4F39E2F3F55DD4 /* TranscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD72A1F55ADD2DE8427C5FC6 /* TranscriptionService.swift */; };
+		70483B0EF0DA221B2C802188 /* VideoPlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5416E48B11B0318463E3A01 /* VideoPlayerViewModel.swift */; };
+		73C4045A0315D548AEBB22BC /* for-tests-silero-v6.2.0-ggml.bin in Resources */ = {isa = PBXBuildFile; fileRef = 73FC8C58217880DFE25776F8 /* for-tests-silero-v6.2.0-ggml.bin */; };
+		7814A835669A8400B54573D6 /* for-tests-ggml-small.en.bin in Resources */ = {isa = PBXBuildFile; fileRef = DD2631E8F3C4183D3AA41820 /* for-tests-ggml-small.en.bin */; };
+		79D02FAF2F8FE636B5D92C7A /* SubtitleParserProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D3F7F1A994020B71E321FBD /* SubtitleParserProtocol.swift */; };
+		863B967EA4470236251F4F43 /* convert-pt-to-ggml.py in Resources */ = {isa = PBXBuildFile; fileRef = 47BEA8FEF26E13B80051AA84 /* convert-pt-to-ggml.py */; };
+		885DC93A28DFCB8C85383D11 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA796F27FEBBD32476511A0 /* DatabaseManager.swift */; };
+		8D7A736CA40C01D33811F5C3 /* TranscriptionTasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9219062A7D5B3A817507CC2D /* TranscriptionTasksView.swift */; };
+		941E604D98B7816EECE58AD3 /* SubtitleEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = A140833F1835EE4CCDD8A0A2 /* SubtitleEntry.swift */; };
+		98DE228D329D3AD5EB1E644F /* TranscriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5820B1A10964D625AB03751 /* TranscriptionView.swift */; };
+		9AB452F95FFAF9F21EE6C65F /* Video.swift in Sources */ = {isa = PBXBuildFile; fileRef = 317EF5A05CFC859528F2860B /* Video.swift */; };
+		9ABD6085F26A8C28FEF8EE33 /* UploadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CCFCE3F02E1EBCCBA64F6C2 /* UploadViewModel.swift */; };
+		9C46F7333B1BAE20FC445041 /* UploadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75A306F257189B8909A3F066 /* UploadView.swift */; };
+		A30DE59C08E9CBA4B3584ED2 /* VocabularyListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFE3AEEEF1B41A0A74EFA77 /* VocabularyListView.swift */; };
+		B0211330880B996BD846E22E /* TranslationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7CC41A525DBD304DAC95EF /* TranslationView.swift */; };
+		B11F1C3F5B75F1947BCE8F01 /* TextDecoder.mlmodelc in Resources */ = {isa = PBXBuildFile; fileRef = A5FC045706D66503D2C8C637 /* TextDecoder.mlmodelc */; };
+		B39D7E67607D3F97789B8235 /* convert-whisper-to-openvino.py in Resources */ = {isa = PBXBuildFile; fileRef = 28E886D5210CAAA89234F2C5 /* convert-whisper-to-openvino.py */; };
+		B51791FDB04C3ABEFE0CDB42 /* convert-h5-to-coreml.py in Resources */ = {isa = PBXBuildFile; fileRef = C63956EE0619590CBE665243 /* convert-h5-to-coreml.py */; };
+		BFCB0DD88EE416FFFB46623B /* Color+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18BD1F8274D91E6A08AEB5E0 /* Color+Theme.swift */; };
+		C365E5C3350F09EE2AEF96AD /* TranslationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D228618040A6A8415856D0 /* TranslationService.swift */; };
+		CAB5BA5E767A0F2DC3DF1149 /* download-coreml-model.sh in Resources */ = {isa = PBXBuildFile; fileRef = E92B528447D201139475E555 /* download-coreml-model.sh */; };
+		CFA8371FEA2F712F628B1E4F /* ASSSubtitleParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBCD2BCB06B685CA1105D08 /* ASSSubtitleParser.swift */; };
+		D1E07C24BAE1F0887B608A0C /* convert-whisper-to-coreml.py in Resources */ = {isa = PBXBuildFile; fileRef = F69B475892DEFFEAFCAB6767 /* convert-whisper-to-coreml.py */; };
+		D2AC3C63E87EF9C8737FAADC /* config.json in Resources */ = {isa = PBXBuildFile; fileRef = A0D69FFE327141658E5B820E /* config.json */; };
+		D38106551F027975CFFD97BC /* download-vad-model.sh in Resources */ = {isa = PBXBuildFile; fileRef = 0E4E79894D539DDD0DBC9725 /* download-vad-model.sh */; };
+		D8C4D46C39C23CD88855B8C8 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 560669CA4325BFD92F198552 /* README.md */; };
+		DE7BD766634D40B2BBEC2C43 /* TranscriptionTaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E4AE4EB92EDA54E0E1A1402 /* TranscriptionTaskManager.swift */; };
+		EE6FF3E73623C0A4B0D63A51 /* SubtitleListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61391F52549BBB9BC195F8C0 /* SubtitleListView.swift */; };
+		EF37564C74B5F862B857CD10 /* AddWordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EE51A65F7487DC02E2BC6BA /* AddWordView.swift */; };
+		F1202AB2ADEF0D9144449562 /* ReviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D6BE399CF2185891342E24 /* ReviewViewModel.swift */; };
+		F94CB4AE3824DB8A920EB04A /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28D3CAF81BEEF53C282B305 /* HomeView.swift */; };
+		FA9FD7BFB93CE14807FB5767 /* SettingsAndReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02291687D117B8B4D9BCE08A /* SettingsAndReviewView.swift */; };
+		FAC77AF1172236500599CB09 /* AudioEncoder.mlmodelc in Resources */ = {isa = PBXBuildFile; fileRef = 27F840003E6A584DF5421EC2 /* AudioEncoder.mlmodelc */; };
+		FC94F1F6793B7FFEBECECDCB /* convert-silero-vad-to-ggml.py in Resources */ = {isa = PBXBuildFile; fileRef = 91ED4FB73AAEB5ED8F882F22 /* convert-silero-vad-to-ggml.py */; };
+		FF882D66379B9BCF478B0B70 /* for-tests-ggml-medium.bin in Resources */ = {isa = PBXBuildFile; fileRef = 150ED358D500960D57DDFC35 /* for-tests-ggml-medium.bin */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		012E1A6FC7E28B7D8D1CD82D /* Word.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Word.swift; sourceTree = "<group>"; };
+		02291687D117B8B4D9BCE08A /* SettingsAndReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAndReviewView.swift; sourceTree = "<group>"; };
+		0A5CB6B48501C9FF6236EBF4 /* SpeakingEnglish.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = SpeakingEnglish.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0D3F7F1A994020B71E321FBD /* SubtitleParserProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleParserProtocol.swift; sourceTree = "<group>"; };
+		0D588E73378FD03EAA7BAC8C /* VocabularyRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VocabularyRepository.swift; sourceTree = "<group>"; };
+		0DAF20C234FD017F52E595EF /* WordDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordDetailView.swift; sourceTree = "<group>"; };
+		0E326964E410A96A74C485C3 /* TranscriptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionViewModel.swift; sourceTree = "<group>"; };
+		0E4E79894D539DDD0DBC9725 /* download-vad-model.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "download-vad-model.sh"; sourceTree = "<group>"; };
+		1492A4F02CD80F328F602AD3 /* .gitignore */ = {isa = PBXFileReference; path = .gitignore; sourceTree = "<group>"; };
+		150ED358D500960D57DDFC35 /* for-tests-ggml-medium.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = "for-tests-ggml-medium.bin"; sourceTree = "<group>"; };
+		16F61912B231B2B4A6D5371C /* for-tests-ggml-base.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = "for-tests-ggml-base.bin"; sourceTree = "<group>"; };
+		18BD1F8274D91E6A08AEB5E0 /* Color+Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Theme.swift"; sourceTree = "<group>"; };
+		18DC5DB27CF36914C52B2A51 /* SM2Algorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SM2Algorithm.swift; sourceTree = "<group>"; };
+		27E704B0CC6DC82C61E031C9 /* SpeakingEnglishApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakingEnglishApp.swift; sourceTree = "<group>"; };
+		27F840003E6A584DF5421EC2 /* AudioEncoder.mlmodelc */ = {isa = PBXFileReference; path = AudioEncoder.mlmodelc; sourceTree = "<group>"; };
+		282CE5E688D15B323FDA77DB /* ReviewRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewRecord.swift; sourceTree = "<group>"; };
+		28E886D5210CAAA89234F2C5 /* convert-whisper-to-openvino.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "convert-whisper-to-openvino.py"; sourceTree = "<group>"; };
+		2E50044786F11E80263062EC /* download-ggml-model.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "download-ggml-model.sh"; sourceTree = "<group>"; };
+		3101DB7E098A3CB55647A60B /* VocabularyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VocabularyService.swift; sourceTree = "<group>"; };
+		317EF5A05CFC859528F2860B /* Video.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Video.swift; sourceTree = "<group>"; };
+		38D233C6D534532F00B980A0 /* MelSpectrogram.mlmodelc */ = {isa = PBXFileReference; path = MelSpectrogram.mlmodelc; sourceTree = "<group>"; };
+		47BEA8FEF26E13B80051AA84 /* convert-pt-to-ggml.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "convert-pt-to-ggml.py"; sourceTree = "<group>"; };
+		4AFE3AEEEF1B41A0A74EFA77 /* VocabularyListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VocabularyListView.swift; sourceTree = "<group>"; };
+		4CE074CF13888B013514104D /* generate-coreml-interface.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "generate-coreml-interface.sh"; sourceTree = "<group>"; };
+		560669CA4325BFD92F198552 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		579C18A289C47FB17BB8E09E /* for-tests-ggml-small.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = "for-tests-ggml-small.bin"; sourceTree = "<group>"; };
+		57B313BBABBF63F92CD03DA5 /* StopWords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopWords.swift; sourceTree = "<group>"; };
+		5858AA65DA5330D6007EEC21 /* VideoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoService.swift; sourceTree = "<group>"; };
+		58BE2101C8CA0D31CBB3E772 /* VideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerView.swift; sourceTree = "<group>"; };
+		59964778518FC8BAC36C8CFD /* SRTSubtitleParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRTSubtitleParser.swift; sourceTree = "<group>"; };
+		5FCD5BC9B447BF93A2E14D3D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		608775FD31563DCA52D76E05 /* for-tests-ggml-base.en.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = "for-tests-ggml-base.en.bin"; sourceTree = "<group>"; };
+		61391F52549BBB9BC195F8C0 /* SubtitleListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleListView.swift; sourceTree = "<group>"; };
+		63A847697021C354317B4E7C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		6CCFCE3F02E1EBCCBA64F6C2 /* UploadViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadViewModel.swift; sourceTree = "<group>"; };
+		73FC8C58217880DFE25776F8 /* for-tests-silero-v6.2.0-ggml.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = "for-tests-silero-v6.2.0-ggml.bin"; sourceTree = "<group>"; };
+		75A306F257189B8909A3F066 /* UploadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadView.swift; sourceTree = "<group>"; };
+		78119344490163EE5D54394D /* DictionaryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryService.swift; sourceTree = "<group>"; };
+		78D228618040A6A8415856D0 /* TranslationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationService.swift; sourceTree = "<group>"; };
+		7C4F1CD1894CF3469A03F8FF /* for-tests-ggml-tiny.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = "for-tests-ggml-tiny.bin"; sourceTree = "<group>"; };
+		7E4AE4EB92EDA54E0E1A1402 /* TranscriptionTaskManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionTaskManager.swift; sourceTree = "<group>"; };
+		873D0D0DE1C49BF729927325 /* DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPicker.swift; sourceTree = "<group>"; };
+		8EC8AD8998FB13B0AB7C80EC /* String+WordProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+WordProcessing.swift"; sourceTree = "<group>"; };
+		918C830A5A18A3AAD07437A3 /* WordExtractionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordExtractionService.swift; sourceTree = "<group>"; };
+		91ED4FB73AAEB5ED8F882F22 /* convert-silero-vad-to-ggml.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "convert-silero-vad-to-ggml.py"; sourceTree = "<group>"; };
+		9219062A7D5B3A817507CC2D /* TranscriptionTasksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionTasksView.swift; sourceTree = "<group>"; };
+		9C93978C82414F1969C4B142 /* for-tests-ggml-tiny.en.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = "for-tests-ggml-tiny.en.bin"; sourceTree = "<group>"; };
+		9D881FE853A00A0297FDA3D4 /* TranslationTaskManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationTaskManager.swift; sourceTree = "<group>"; };
+		9EE51A65F7487DC02E2BC6BA /* AddWordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWordView.swift; sourceTree = "<group>"; };
+		A0D69FFE327141658E5B820E /* config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = config.json; sourceTree = "<group>"; };
+		A140833F1835EE4CCDD8A0A2 /* SubtitleEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleEntry.swift; sourceTree = "<group>"; };
+		A397ABB71474E80A49FB147D /* requirements-coreml.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "requirements-coreml.txt"; sourceTree = "<group>"; };
+		A5416E48B11B0318463E3A01 /* VideoPlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewModel.swift; sourceTree = "<group>"; };
+		A5FC045706D66503D2C8C637 /* TextDecoder.mlmodelc */ = {isa = PBXFileReference; path = TextDecoder.mlmodelc; sourceTree = "<group>"; };
+		A70EBCA889B44AB7C430BB6A /* UploadService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadService.swift; sourceTree = "<group>"; };
+		A9CE4A99FC91A9C44C62E430 /* generation_config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = generation_config.json; sourceTree = "<group>"; };
+		AD72A1F55ADD2DE8427C5FC6 /* TranscriptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionService.swift; sourceTree = "<group>"; };
+		B4914F50282EC447096156B4 /* VocabularyEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VocabularyEntry.swift; sourceTree = "<group>"; };
+		BDB77969190870C47EE021D3 /* download-ggml-model.cmd */ = {isa = PBXFileReference; path = "download-ggml-model.cmd"; sourceTree = "<group>"; };
+		C43F081F7AE199B9D22C2A49 /* SampleVideos */ = {isa = PBXFileReference; lastKnownFileType = folder; name = SampleVideos; path = Resources/SampleVideos; sourceTree = SOURCE_ROOT; };
+		C5820B1A10964D625AB03751 /* TranscriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionView.swift; sourceTree = "<group>"; };
+		C63956EE0619590CBE665243 /* convert-h5-to-coreml.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "convert-h5-to-coreml.py"; sourceTree = "<group>"; };
+		CBC858F9CC3BC5CC85536A24 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		CD7CC41A525DBD304DAC95EF /* TranslationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationView.swift; sourceTree = "<group>"; };
+		DD2631E8F3C4183D3AA41820 /* for-tests-ggml-small.en.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = "for-tests-ggml-small.en.bin"; sourceTree = "<group>"; };
+		DDBCD2BCB06B685CA1105D08 /* ASSSubtitleParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASSSubtitleParser.swift; sourceTree = "<group>"; };
+		E28D3CAF81BEEF53C282B305 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		E2D453612AAD21FAE46DC252 /* generate-coreml-model.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "generate-coreml-model.sh"; sourceTree = "<group>"; };
+		E2F7BEC27939CAE10F14813D /* VideoRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoRepository.swift; sourceTree = "<group>"; };
+		E6D6BE399CF2185891342E24 /* ReviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewViewModel.swift; sourceTree = "<group>"; };
+		E92B528447D201139475E555 /* download-coreml-model.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "download-coreml-model.sh"; sourceTree = "<group>"; };
+		EC60783FC4EB5621FD95D54A /* convert-h5-to-ggml.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "convert-h5-to-ggml.py"; sourceTree = "<group>"; };
+		ECA796F27FEBBD32476511A0 /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
+		ED437D9F98D432890215F398 /* for-tests-ggml-medium.en.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = "for-tests-ggml-medium.en.bin"; sourceTree = "<group>"; };
+		F18111ACC3137E0210F33BBF /* download-vad-model.cmd */ = {isa = PBXFileReference; path = "download-vad-model.cmd"; sourceTree = "<group>"; };
+		F4528BAE5C2281C3D7631DDD /* for-tests-ggml-large.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = "for-tests-ggml-large.bin"; sourceTree = "<group>"; };
+		F69B475892DEFFEAFCAB6767 /* convert-whisper-to-coreml.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "convert-whisper-to-coreml.py"; sourceTree = "<group>"; };
+		FA13396DF3C24C8882D0D264 /* requirements-openvino.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "requirements-openvino.txt"; sourceTree = "<group>"; };
+		FB5271685FD474F34F0B756A /* ggml_to_pt.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = ggml_to_pt.py; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		BD69B5482ED4FAB2857D5DC9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				431675DCD6525CDF75641073 /* SQLite in Frameworks */,
+				64E3953FE5342C41D6698EDD /* WhisperKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0806B0D775FBC1E856D0B5F2 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				282CE5E688D15B323FDA77DB /* ReviewRecord.swift */,
+				A140833F1835EE4CCDD8A0A2 /* SubtitleEntry.swift */,
+				317EF5A05CFC859528F2860B /* Video.swift */,
+				B4914F50282EC447096156B4 /* VocabularyEntry.swift */,
+				012E1A6FC7E28B7D8D1CD82D /* Word.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		0CB3A4775D4C4B506B837A44 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				0806B0D775FBC1E856D0B5F2 /* Models */,
+				236E30D7D41E92150C8B3E39 /* Persistence */,
+				82D1692D1B5CB7418A73EB3B /* Services */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		13DFBAB0BB54C182038F1F80 /* WhisperModels */ = {
+			isa = PBXGroup;
+			children = (
+				7B022D2AB9068898821A9D93 /* openai_whisper-tiny */,
+			);
+			path = WhisperModels;
+			sourceTree = "<group>";
+		};
+		1624586DC499B2323862F786 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0A5CB6B48501C9FF6236EBF4 /* SpeakingEnglish.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		236E30D7D41E92150C8B3E39 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				ECA796F27FEBBD32476511A0 /* DatabaseManager.swift */,
+				E2F7BEC27939CAE10F14813D /* VideoRepository.swift */,
+				0D588E73378FD03EAA7BAC8C /* VocabularyRepository.swift */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
+		380273E25A371E851CC427CA /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				873D0D0DE1C49BF729927325 /* DocumentPicker.swift */,
+				61391F52549BBB9BC195F8C0 /* SubtitleListView.swift */,
+				420A88D4CDA7BAFD42403E44 /* Components */,
+				ADA7AF6C90D69D83AE7323EC /* Constants */,
+				FF49719EE074C80C6F97B74D /* Extensions */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		419496CD5AE609D971DE7326 /* SampleSubtitles */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = SampleSubtitles;
+			sourceTree = "<group>";
+		};
+		420A88D4CDA7BAFD42403E44 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4A5ED233FEFA0CE40161C99E /* Vocabulary */ = {
+			isa = PBXGroup;
+			children = (
+				9EE51A65F7487DC02E2BC6BA /* AddWordView.swift */,
+				4AFE3AEEEF1B41A0A74EFA77 /* VocabularyListView.swift */,
+				0DAF20C234FD017F52E595EF /* WordDetailView.swift */,
+			);
+			path = Vocabulary;
+			sourceTree = "<group>";
+		};
+		56297B93F752F30F90AE8A6A /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				C49AE7F33AAF3BAA811F2C20 /* Home */,
+				B403C5C06B3FFA9C23F3FC1E /* Review */,
+				5AAF6F9332D0C5E2FCCBC9A1 /* Settings */,
+				BBD58533631F8C78DD63514C /* Transcription */,
+				BF578A5FBC58ACF4E2B48876 /* Translation */,
+				DA2A1C96A758EE266A5062CF /* Upload */,
+				D8750BEB6983FFCE8AC775E2 /* VideoPlayer */,
+				4A5ED233FEFA0CE40161C99E /* Vocabulary */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		5AAF6F9332D0C5E2FCCBC9A1 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				02291687D117B8B4D9BCE08A /* SettingsAndReviewView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		7B022D2AB9068898821A9D93 /* openai_whisper-tiny */ = {
+			isa = PBXGroup;
+			children = (
+				27F840003E6A584DF5421EC2 /* AudioEncoder.mlmodelc */,
+				A0D69FFE327141658E5B820E /* config.json */,
+				A9CE4A99FC91A9C44C62E430 /* generation_config.json */,
+				38D233C6D534532F00B980A0 /* MelSpectrogram.mlmodelc */,
+				A5FC045706D66503D2C8C637 /* TextDecoder.mlmodelc */,
+			);
+			path = "openai_whisper-tiny";
+			sourceTree = "<group>";
+		};
+		82D1692D1B5CB7418A73EB3B /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				78119344490163EE5D54394D /* DictionaryService.swift */,
+				18DC5DB27CF36914C52B2A51 /* SM2Algorithm.swift */,
+				AD72A1F55ADD2DE8427C5FC6 /* TranscriptionService.swift */,
+				7E4AE4EB92EDA54E0E1A1402 /* TranscriptionTaskManager.swift */,
+				78D228618040A6A8415856D0 /* TranslationService.swift */,
+				9D881FE853A00A0297FDA3D4 /* TranslationTaskManager.swift */,
+				A70EBCA889B44AB7C430BB6A /* UploadService.swift */,
+				5858AA65DA5330D6007EEC21 /* VideoService.swift */,
+				3101DB7E098A3CB55647A60B /* VocabularyService.swift */,
+				918C830A5A18A3AAD07437A3 /* WordExtractionService.swift */,
+				F4F36576CAC3287A902E4EE5 /* SubtitleParser */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		ADA7AF6C90D69D83AE7323EC /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				57B313BBABBF63F92CD03DA5 /* StopWords.swift */,
+			);
+			path = Constants;
+			sourceTree = "<group>";
+		};
+		AE3C560B3DC438BD3E95853C /* models */ = {
+			isa = PBXGroup;
+			children = (
+				1492A4F02CD80F328F602AD3 /* .gitignore */,
+				C63956EE0619590CBE665243 /* convert-h5-to-coreml.py */,
+				EC60783FC4EB5621FD95D54A /* convert-h5-to-ggml.py */,
+				47BEA8FEF26E13B80051AA84 /* convert-pt-to-ggml.py */,
+				91ED4FB73AAEB5ED8F882F22 /* convert-silero-vad-to-ggml.py */,
+				F69B475892DEFFEAFCAB6767 /* convert-whisper-to-coreml.py */,
+				28E886D5210CAAA89234F2C5 /* convert-whisper-to-openvino.py */,
+				E92B528447D201139475E555 /* download-coreml-model.sh */,
+				BDB77969190870C47EE021D3 /* download-ggml-model.cmd */,
+				2E50044786F11E80263062EC /* download-ggml-model.sh */,
+				F18111ACC3137E0210F33BBF /* download-vad-model.cmd */,
+				0E4E79894D539DDD0DBC9725 /* download-vad-model.sh */,
+				16F61912B231B2B4A6D5371C /* for-tests-ggml-base.bin */,
+				608775FD31563DCA52D76E05 /* for-tests-ggml-base.en.bin */,
+				F4528BAE5C2281C3D7631DDD /* for-tests-ggml-large.bin */,
+				150ED358D500960D57DDFC35 /* for-tests-ggml-medium.bin */,
+				ED437D9F98D432890215F398 /* for-tests-ggml-medium.en.bin */,
+				579C18A289C47FB17BB8E09E /* for-tests-ggml-small.bin */,
+				DD2631E8F3C4183D3AA41820 /* for-tests-ggml-small.en.bin */,
+				7C4F1CD1894CF3469A03F8FF /* for-tests-ggml-tiny.bin */,
+				9C93978C82414F1969C4B142 /* for-tests-ggml-tiny.en.bin */,
+				73FC8C58217880DFE25776F8 /* for-tests-silero-v6.2.0-ggml.bin */,
+				4CE074CF13888B013514104D /* generate-coreml-interface.sh */,
+				E2D453612AAD21FAE46DC252 /* generate-coreml-model.sh */,
+				FB5271685FD474F34F0B756A /* ggml_to_pt.py */,
+				560669CA4325BFD92F198552 /* README.md */,
+				A397ABB71474E80A49FB147D /* requirements-coreml.txt */,
+				FA13396DF3C24C8882D0D264 /* requirements-openvino.txt */,
+			);
+			name = models;
+			path = WhisperWrapper/whisper.cpp/models;
+			sourceTree = "<group>";
+		};
+		B403C5C06B3FFA9C23F3FC1E /* Review */ = {
+			isa = PBXGroup;
+			children = (
+				E6D6BE399CF2185891342E24 /* ReviewViewModel.swift */,
+			);
+			path = Review;
+			sourceTree = "<group>";
+		};
+		BBD58533631F8C78DD63514C /* Transcription */ = {
+			isa = PBXGroup;
+			children = (
+				C5820B1A10964D625AB03751 /* TranscriptionView.swift */,
+				0E326964E410A96A74C485C3 /* TranscriptionViewModel.swift */,
+			);
+			path = Transcription;
+			sourceTree = "<group>";
+		};
+		BF578A5FBC58ACF4E2B48876 /* Translation */ = {
+			isa = PBXGroup;
+			children = (
+				CD7CC41A525DBD304DAC95EF /* TranslationView.swift */,
+			);
+			path = Translation;
+			sourceTree = "<group>";
+		};
+		C49AE7F33AAF3BAA811F2C20 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				E28D3CAF81BEEF53C282B305 /* HomeView.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		D1E070EA6802FA8676C40B86 = {
+			isa = PBXGroup;
+			children = (
+				C43F081F7AE199B9D22C2A49 /* SampleVideos */,
+				F7BADF0E7DDA396862750DDC /* App */,
+				0CB3A4775D4C4B506B837A44 /* Core */,
+				56297B93F752F30F90AE8A6A /* Features */,
+				AE3C560B3DC438BD3E95853C /* models */,
+				E7A266081E97C8FE005F574C /* Resources */,
+				380273E25A371E851CC427CA /* Shared */,
+				1624586DC499B2323862F786 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D8750BEB6983FFCE8AC775E2 /* VideoPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				58BE2101C8CA0D31CBB3E772 /* VideoPlayerView.swift */,
+				A5416E48B11B0318463E3A01 /* VideoPlayerViewModel.swift */,
+			);
+			path = VideoPlayer;
+			sourceTree = "<group>";
+		};
+		DA2A1C96A758EE266A5062CF /* Upload */ = {
+			isa = PBXGroup;
+			children = (
+				9219062A7D5B3A817507CC2D /* TranscriptionTasksView.swift */,
+				75A306F257189B8909A3F066 /* UploadView.swift */,
+				6CCFCE3F02E1EBCCBA64F6C2 /* UploadViewModel.swift */,
+			);
+			path = Upload;
+			sourceTree = "<group>";
+		};
+		E7A266081E97C8FE005F574C /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				5FCD5BC9B447BF93A2E14D3D /* Assets.xcassets */,
+				CBC858F9CC3BC5CC85536A24 /* Info.plist */,
+				419496CD5AE609D971DE7326 /* SampleSubtitles */,
+				13DFBAB0BB54C182038F1F80 /* WhisperModels */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		F4F36576CAC3287A902E4EE5 /* SubtitleParser */ = {
+			isa = PBXGroup;
+			children = (
+				DDBCD2BCB06B685CA1105D08 /* ASSSubtitleParser.swift */,
+				59964778518FC8BAC36C8CFD /* SRTSubtitleParser.swift */,
+				0D3F7F1A994020B71E321FBD /* SubtitleParserProtocol.swift */,
+			);
+			path = SubtitleParser;
+			sourceTree = "<group>";
+		};
+		F7BADF0E7DDA396862750DDC /* App */ = {
+			isa = PBXGroup;
+			children = (
+				63A847697021C354317B4E7C /* ContentView.swift */,
+				27E704B0CC6DC82C61E031C9 /* SpeakingEnglishApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		FF49719EE074C80C6F97B74D /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				18BD1F8274D91E6A08AEB5E0 /* Color+Theme.swift */,
+				8EC8AD8998FB13B0AB7C80EC /* String+WordProcessing.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		22752B77103859297D0E2107 /* SpeakingEnglish */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ED42F1DF7DA8BB95008778DF /* Build configuration list for PBXNativeTarget "SpeakingEnglish" */;
+			buildPhases = (
+				97453B9D61D2880160B98725 /* Sources */,
+				DECB568C77EE015355147692 /* Resources */,
+				BD69B5482ED4FAB2857D5DC9 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SpeakingEnglish;
+			packageProductDependencies = (
+				EA1F3D54D620584B9193468E /* SQLite */,
+				1460601EC9324E39AB71AFCB /* WhisperKit */,
+			);
+			productName = SpeakingEnglish;
+			productReference = 0A5CB6B48501C9FF6236EBF4 /* SpeakingEnglish.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B8EEAAE59D7F30700C6A3D3A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					22752B77103859297D0E2107 = {
+						DevelopmentTeam = "";
+					};
+				};
+			};
+			buildConfigurationList = 7D4C4CB9FCDA045CDFCFC0EF /* Build configuration list for PBXProject "SpeakingEnglish" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = D1E070EA6802FA8676C40B86;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B8033B0B65CE21AA3C8E47BE /* XCRemoteSwiftPackageReference "SQLite.swift" */,
+				D5B2728A9A30B1B6AA8EED17 /* XCRemoteSwiftPackageReference "WhisperKit" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 1624586DC499B2323862F786 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				22752B77103859297D0E2107 /* SpeakingEnglish */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		DECB568C77EE015355147692 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59B7D95BCDAF52A5B8F09584 /* .gitignore in Resources */,
+				0A248C32A980535E79A80464 /* Assets.xcassets in Resources */,
+				FAC77AF1172236500599CB09 /* AudioEncoder.mlmodelc in Resources */,
+				47E2B87060E98906795B87A8 /* MelSpectrogram.mlmodelc in Resources */,
+				D8C4D46C39C23CD88855B8C8 /* README.md in Resources */,
+				2168423B201C6A25B3218F1C /* SampleVideos in Resources */,
+				B11F1C3F5B75F1947BCE8F01 /* TextDecoder.mlmodelc in Resources */,
+				D2AC3C63E87EF9C8737FAADC /* config.json in Resources */,
+				B51791FDB04C3ABEFE0CDB42 /* convert-h5-to-coreml.py in Resources */,
+				07771CEA93219C4B584097ED /* convert-h5-to-ggml.py in Resources */,
+				863B967EA4470236251F4F43 /* convert-pt-to-ggml.py in Resources */,
+				FC94F1F6793B7FFEBECECDCB /* convert-silero-vad-to-ggml.py in Resources */,
+				D1E07C24BAE1F0887B608A0C /* convert-whisper-to-coreml.py in Resources */,
+				B39D7E67607D3F97789B8235 /* convert-whisper-to-openvino.py in Resources */,
+				CAB5BA5E767A0F2DC3DF1149 /* download-coreml-model.sh in Resources */,
+				0DDE01F5E6C86A48702C718A /* download-ggml-model.cmd in Resources */,
+				649D65410474EE524174DB09 /* download-ggml-model.sh in Resources */,
+				59FD562B5E35E9E8687D3BA0 /* download-vad-model.cmd in Resources */,
+				D38106551F027975CFFD97BC /* download-vad-model.sh in Resources */,
+				4ACEEC29AD60C553F11C7D01 /* for-tests-ggml-base.bin in Resources */,
+				346FD21032FD95C7ECBCF6AE /* for-tests-ggml-base.en.bin in Resources */,
+				4A30CEDAFF4F135F52BDD5DA /* for-tests-ggml-large.bin in Resources */,
+				FF882D66379B9BCF478B0B70 /* for-tests-ggml-medium.bin in Resources */,
+				661FA207017348F1169AB3D9 /* for-tests-ggml-medium.en.bin in Resources */,
+				39E01E6E75C68E84C58043B2 /* for-tests-ggml-small.bin in Resources */,
+				7814A835669A8400B54573D6 /* for-tests-ggml-small.en.bin in Resources */,
+				0D15C2F7FBACBB6EE40FAD09 /* for-tests-ggml-tiny.bin in Resources */,
+				06C32F9AA992356D263C8C57 /* for-tests-ggml-tiny.en.bin in Resources */,
+				73C4045A0315D548AEBB22BC /* for-tests-silero-v6.2.0-ggml.bin in Resources */,
+				6330D1399C4178DFC98233D7 /* generate-coreml-interface.sh in Resources */,
+				2C04DE947C6CD7BF2C4CD4D8 /* generate-coreml-model.sh in Resources */,
+				4BCB15A53F833740E35100FB /* generation_config.json in Resources */,
+				361899DCC1A2B463F678B6AA /* ggml_to_pt.py in Resources */,
+				34AE291E2D7C41E6C806F6C3 /* requirements-coreml.txt in Resources */,
+				2A1CDBE5944E83EA348A6B32 /* requirements-openvino.txt in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		97453B9D61D2880160B98725 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFA8371FEA2F712F628B1E4F /* ASSSubtitleParser.swift in Sources */,
+				EF37564C74B5F862B857CD10 /* AddWordView.swift in Sources */,
+				BFCB0DD88EE416FFFB46623B /* Color+Theme.swift in Sources */,
+				2EB446432CCEA57CB33A782F /* ContentView.swift in Sources */,
+				885DC93A28DFCB8C85383D11 /* DatabaseManager.swift in Sources */,
+				5A582CF8909DE60127F5D803 /* DictionaryService.swift in Sources */,
+				5787AE644736607D818324A4 /* DocumentPicker.swift in Sources */,
+				F94CB4AE3824DB8A920EB04A /* HomeView.swift in Sources */,
+				14F74821018DC11FDC241807 /* ReviewRecord.swift in Sources */,
+				F1202AB2ADEF0D9144449562 /* ReviewViewModel.swift in Sources */,
+				1D86076C556B470AF850BB74 /* SM2Algorithm.swift in Sources */,
+				55C712931B4058D7D21B4249 /* SRTSubtitleParser.swift in Sources */,
+				FA9FD7BFB93CE14807FB5767 /* SettingsAndReviewView.swift in Sources */,
+				2652868D0CFD2BB6C6C9742D /* SpeakingEnglishApp.swift in Sources */,
+				190B50B393B45D00486D397F /* StopWords.swift in Sources */,
+				2787C2311540DDCF19960DA5 /* String+WordProcessing.swift in Sources */,
+				941E604D98B7816EECE58AD3 /* SubtitleEntry.swift in Sources */,
+				EE6FF3E73623C0A4B0D63A51 /* SubtitleListView.swift in Sources */,
+				79D02FAF2F8FE636B5D92C7A /* SubtitleParserProtocol.swift in Sources */,
+				6E7D07A53A4F39E2F3F55DD4 /* TranscriptionService.swift in Sources */,
+				DE7BD766634D40B2BBEC2C43 /* TranscriptionTaskManager.swift in Sources */,
+				8D7A736CA40C01D33811F5C3 /* TranscriptionTasksView.swift in Sources */,
+				98DE228D329D3AD5EB1E644F /* TranscriptionView.swift in Sources */,
+				6639B658F97612E5F52C7DC0 /* TranscriptionViewModel.swift in Sources */,
+				C365E5C3350F09EE2AEF96AD /* TranslationService.swift in Sources */,
+				3E7CB136D5A288CF9747FBD2 /* TranslationTaskManager.swift in Sources */,
+				B0211330880B996BD846E22E /* TranslationView.swift in Sources */,
+				6A11E542C42BB3C47F777A96 /* UploadService.swift in Sources */,
+				9C46F7333B1BAE20FC445041 /* UploadView.swift in Sources */,
+				9ABD6085F26A8C28FEF8EE33 /* UploadViewModel.swift in Sources */,
+				9AB452F95FFAF9F21EE6C65F /* Video.swift in Sources */,
+				255075113D474F158A9124B0 /* VideoPlayerView.swift in Sources */,
+				70483B0EF0DA221B2C802188 /* VideoPlayerViewModel.swift in Sources */,
+				5251FFA42D2A46DA09398FF4 /* VideoRepository.swift in Sources */,
+				0B9A9E9D95BE78106016691A /* VideoService.swift in Sources */,
+				0D84DED286D39FDC47C4822A /* VocabularyEntry.swift in Sources */,
+				A30DE59C08E9CBA4B3584ED2 /* VocabularyListView.swift in Sources */,
+				327E0C62CBD333940FB78014 /* VocabularyRepository.swift in Sources */,
+				25F5AEEB0766A6BEC6BF1F30 /* VocabularyService.swift in Sources */,
+				25C5E27C059E695F3EBB873D /* Word.swift in Sources */,
+				30E0DD5B105D7F333D24164B /* WordDetailView.swift in Sources */,
+				1DA401A4EFBE23990ACB7C7C /* WordExtractionService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		44247A7DB19EA08A19ADAD56 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		44FDF928D8D4DFD0608CCD77 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				MARKETING_VERSION = 1.0.0;
+				OTHER_LDFLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.speakingenglish.h2ocean;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B127E5A4CB754E8BCDA27B5B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		E915F80EF311B5FE43F9CAF7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				MARKETING_VERSION = 1.0.0;
+				OTHER_LDFLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.speakingenglish.h2ocean;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7D4C4CB9FCDA045CDFCFC0EF /* Build configuration list for PBXProject "SpeakingEnglish" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B127E5A4CB754E8BCDA27B5B /* Debug */,
+				44247A7DB19EA08A19ADAD56 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		ED42F1DF7DA8BB95008778DF /* Build configuration list for PBXNativeTarget "SpeakingEnglish" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				44FDF928D8D4DFD0608CCD77 /* Debug */,
+				E915F80EF311B5FE43F9CAF7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B8033B0B65CE21AA3C8E47BE /* XCRemoteSwiftPackageReference "SQLite.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stephencelis/SQLite.swift";
+			requirement = {
+				kind = exactVersion;
+				version = 0.15.3;
+			};
+		};
+		D5B2728A9A30B1B6AA8EED17 /* XCRemoteSwiftPackageReference "WhisperKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/argmaxinc/WhisperKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.5.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1460601EC9324E39AB71AFCB /* WhisperKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D5B2728A9A30B1B6AA8EED17 /* XCRemoteSwiftPackageReference "WhisperKit" */;
+			productName = WhisperKit;
+		};
+		EA1F3D54D620584B9193468E /* SQLite */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B8033B0B65CE21AA3C8E47BE /* XCRemoteSwiftPackageReference "SQLite.swift" */;
+			productName = SQLite;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = B8EEAAE59D7F30700C6A3D3A /* Project object */;
+}

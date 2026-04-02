@@ -1,0 +1,46 @@
+name: SpeakingEnglish
+options:
+  bundleIdPrefix: com.speakingenglish
+  deploymentTarget:
+    iOS: "16.0"
+  xcodeVersion: "15.0"
+  generateEmptyDirectories: true
+
+packages:
+  SQLite:
+    url: https://github.com/stephencelis/SQLite.swift
+    version: 0.15.3
+  WhisperKit:
+    url: https://github.com/argmaxinc/WhisperKit
+    from: "0.5.0"
+
+targets:
+  SpeakingEnglish:
+    type: application
+    platform: iOS
+    sources:
+      - path: App
+      - path: Core
+      - path: Features
+      - path: Shared
+      - path: Resources
+        excludes:
+          - "SampleVideos/**"
+      - path: Resources/SampleVideos
+        type: folder
+        buildPhase: resources
+      - path: WhisperWrapper/whisper.cpp/models
+        buildPhase: resources
+    settings:
+      base:
+        INFOPLIST_FILE: Resources/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.speakingenglish.h2ocean
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        DEVELOPMENT_TEAM: ""
+        SWIFT_VERSION: "5.9"
+        LIBRARY_SEARCH_PATHS: "$(inherited)"
+        OTHER_LDFLAGS: "$(inherited)"
+    dependencies:
+      - package: SQLite
+      - package: WhisperKit
