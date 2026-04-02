@@ -130,13 +130,17 @@ class TranscriptionTaskManager: ObservableObject {
                 try Task.checkCancellation()
 
                 // 提取音频
-                self.updateProgress(taskID, progress: 0.1, message: "正在提取音频...")
+                await MainActor.run {
+                    self.updateProgress(taskID, progress: 0.1, message: "正在提取音频...")
+                }
                 let audioURL = try await self.extractAudio(from: videoURL)
 
                 try Task.checkCancellation()
 
                 // 初始化 WhisperKit
-                self.updateProgress(taskID, progress: 0.2, message: "正在初始化 WhisperKit...")
+                await MainActor.run {
+                    self.updateProgress(taskID, progress: 0.2, message: "正在初始化 WhisperKit...")
+                }
                 if transcriptionService.whisperKit == nil {
                     try await transcriptionService.initWhisperKit(useLocalModel: true)
                 }
@@ -144,10 +148,14 @@ class TranscriptionTaskManager: ObservableObject {
                 try Task.checkCancellation()
 
                 // 转录
-                self.updateProgress(taskID, progress: 0.3, message: "正在转录...")
+                await MainActor.run {
+                    self.updateProgress(taskID, progress: 0.3, message: "正在转录...")
+                }
                 let entries = try await transcriptionService.transcribeWithWhisperKit(audioURL: audioURL) { [weak self] progress, status in
-                    let overallProgress = 0.3 + (progress * 0.6)
-                    self?.updateProgress(taskID, progress: overallProgress, message: status)
+                    Task { @MainActor in
+                        let overallProgress = 0.3 + (progress * 0.6)
+                        self?.updateProgress(taskID, progress: overallProgress, message: status)
+                    }
                 }
 
                 try Task.checkCancellation()
@@ -156,7 +164,9 @@ class TranscriptionTaskManager: ObservableObject {
                 try? FileManager.default.removeItem(at: audioURL)
 
                 // 生成字幕文件
-                self.updateProgress(taskID, progress: 0.95, message: "正在保存字幕...")
+                await MainActor.run {
+                    self.updateProgress(taskID, progress: 0.95, message: "正在保存字幕...")
+                }
                 let srtContent = transcriptionService.generateSRT(from: entries)
 
                 let tempDir = FileManager.default.temporaryDirectory
