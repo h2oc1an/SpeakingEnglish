@@ -9,6 +9,9 @@ xcuserdata/
 *.dSYM.zip
 *.dSYM
 
+# XcodeGen generated project
+SpeakingEnglish.xcodeproj/
+
 # CocoaPods
 Pods/
 

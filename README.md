@@ -104,7 +104,14 @@ SpeakingEnglish/
 
 ## 快速开始
 
-### 1. 安装依赖
+### 1. 克隆项目
+
+```bash
+git clone https://github.com/h2oc1an/SpeakingEnglish.git
+cd SpeakingEnglish
+```
+
+### 2. 生成 Xcode 项目
 
 ```bash
 # 安装 XcodeGen（如果未安装）
@@ -114,17 +121,17 @@ brew install xcodegen
 xcodegen generate
 ```
 
-### 2. 配置签名（可选）
+### 3. 配置签名（可选）
 
-在 Xcode 中打开 `SpeakingEnglish.xcodeproj`，选择 Signing & Capabilities 配置团队账号。
+在 Xcode 中打开生成的 `SpeakingEnglish.xcodeproj`，选择 Signing & Capabilities 配置团队账号。
 
 > **注意**：需要开发者账号。
 
-### 3. 添加示例视频
+### 4. 添加示例视频（可选）
 
 将 MP4 视频和对应的 SRT/ASS 字幕文件放入 `Resources/SampleVideos/` 目录。
 
-### 4. 构建运行
+### 5. 构建运行
 
 ```bash
 # 使用 xcodebuild 构建
