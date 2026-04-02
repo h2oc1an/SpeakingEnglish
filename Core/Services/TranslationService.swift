@@ -1,6 +1,6 @@
 import Foundation
 
-/// 翻译服务 - 使用 Bing Translator API 进行英译中
+/// 翻译服务 - 使用 Bing Translator API
 class TranslationService {
     static let shared = TranslationService()
 

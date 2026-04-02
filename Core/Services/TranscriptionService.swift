@@ -237,6 +237,7 @@ class TranscriptionService {
             "<|startoftranscript|>",
             "<|startodtranscript|>",  // Whisper 有时会拼错
             "<|endoftranscript|>",
+            "<|endoftext|>",
             "<|transcribe|>",
             "<|translate|>",
             "<|nospeech|>",
