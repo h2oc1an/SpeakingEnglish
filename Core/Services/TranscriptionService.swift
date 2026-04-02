@@ -20,33 +20,25 @@ class TranscriptionService {
     /// WhisperKit 模型名称 (tiny/base/small/medium/large-v1/large-v2/large-v3)
     var whisperModelName: String = "openai_whisper-tiny"
 
-    /// 本地模型文件夹路径 (nil 则从 bundle 加载)
+    /// 本地模型路径 (bundle 根目录，因为 Xcode 会扁平化文件夹结构)
     var localModelFolder: URL? {
-        Bundle.main.resourceURL?.appendingPathComponent("WhisperModels")
+        Bundle.main.resourceURL
     }
 
     /// 初始化 WhisperKit
-    /// - Parameter useLocalModel: 是否使用本地预置模型 (默认 true)
-    func initWhisperKit(useLocalModel: Bool = true) async throws {
-        let modelFolderPath: String?
-
-        if useLocalModel, let localPath = localModelFolder {
-            // 检查本地模型是否存在
-            let modelExists = FileManager.default.fileExists(atPath: localPath.path)
-            print("本地模型路径: \(localPath.path), 存在: \(modelExists)")
-
-            if modelExists {
-                // 查找模型子目录 (如 openai_whisper-tiny)
-                if let modelSubDir = findModelSubfolder(in: localPath) {
-                    modelFolderPath = modelSubDir.path
-                } else {
-                    modelFolderPath = localPath.path
-                }
-            } else {
-                modelFolderPath = nil
+    func initWhisperKit() async throws {
+        // 检查本地模型是否存在
+        var modelFolderPath: String? = nil
+        if let localPath = localModelFolder {
+            let melSpec = localPath.appendingPathComponent("MelSpectrogram.mlmodelc")
+            let encoder = localPath.appendingPathComponent("AudioEncoder.mlmodelc")
+            let decoder = localPath.appendingPathComponent("TextDecoder.mlmodelc")
+            if FileManager.default.fileExists(atPath: melSpec.path) &&
+               FileManager.default.fileExists(atPath: encoder.path) &&
+               FileManager.default.fileExists(atPath: decoder.path) {
+                modelFolderPath = localPath.path
+                print("使用本地模型: \(whisperModelName)")
             }
-        } else {
-            modelFolderPath = nil
         }
 
         let config = WhisperKitConfig(
@@ -54,37 +46,10 @@ class TranscriptionService {
             modelFolder: modelFolderPath,
             verbose: true,
             logLevel: .debug,
-            download: modelFolderPath == nil  // 本地模型不存在时尝试下载
+            download: false  // 使用本地模型，不下载
         )
 
         whisperKit = try await WhisperKit(config)
-    }
-
-    /// 查找模型子文件夹
-    private func findModelSubfolder(in baseURL: URL) -> URL? {
-        let fileManager = FileManager.default
-        guard let contents = try? fileManager.contentsOfDirectory(at: baseURL, includingPropertiesForKeys: nil) else {
-            return nil
-        }
-
-        // 查找包含 mlmodelc 文件的子目录
-        for item in contents {
-            var isDirectory: ObjCBool = false
-            if fileManager.fileExists(atPath: item.path, isDirectory: &isDirectory), isDirectory.boolValue {
-                // 检查是否包含 CoreML 模型
-                let melSpec = item.appendingPathComponent("MelSpectrogram.mlmodelc")
-                let encoder = item.appendingPathComponent("AudioEncoder.mlmodelc")
-                let decoder = item.appendingPathComponent("TextDecoder.mlmodelc")
-
-                if fileManager.fileExists(atPath: melSpec.path) &&
-                   fileManager.fileExists(atPath: encoder.path) &&
-                   fileManager.fileExists(atPath: decoder.path) {
-                    print("找到模型子目录: \(item.lastPathComponent)")
-                    return item
-                }
-            }
-        }
-        return nil
     }
 
     /// 从视频文件转录语音 (使用 WhisperKit)

@@ -173,6 +173,7 @@ struct TranslationTaskRowView: View {
 struct TranslationTaskDetailView: View {
     let task: TranslationTask
     @Environment(\.dismiss) private var dismiss
+    @State private var translatedContent: String?
 
     var body: some View {
         NavigationStack {
@@ -205,10 +206,18 @@ struct TranslationTaskDetailView: View {
                 }
 
                 if task.status == .completed, let resultPath = task.resultPath {
-                    Section("结果") {
-                        Text(resultPath)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                    Section("翻译结果") {
+                        if let content = translatedContent {
+                            ScrollView {
+                                Text(content)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            .frame(height: 300)
+                        } else {
+                            Text("加载中...")
+                                .foregroundColor(.secondary)
+                        }
 
                         ShareLink(item: URL(fileURLWithPath: resultPath)) {
                             HStack {
@@ -230,6 +239,18 @@ struct TranslationTaskDetailView: View {
                     }
                 }
             }
+            .onAppear {
+                loadTranslatedContent()
+            }
+        }
+    }
+
+    private func loadTranslatedContent() {
+        guard let resultPath = task.resultPath else { return }
+        do {
+            translatedContent = try String(contentsOfFile: resultPath, encoding: .utf8)
+        } catch {
+            translatedContent = "读取失败: \(error.localizedDescription)"
         }
     }
 }

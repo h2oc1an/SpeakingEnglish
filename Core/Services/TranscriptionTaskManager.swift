@@ -142,7 +142,7 @@ class TranscriptionTaskManager: ObservableObject {
                     self.updateProgress(taskID, progress: 0.2, message: "正在初始化 WhisperKit...")
                 }
                 if transcriptionService.whisperKit == nil {
-                    try await transcriptionService.initWhisperKit(useLocalModel: true)
+                    try await transcriptionService.initWhisperKit()
                 }
 
                 try Task.checkCancellation()

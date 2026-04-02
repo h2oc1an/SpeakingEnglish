@@ -178,10 +178,10 @@ open SpeakingEnglish.xcodeproj
 - **使用帮助**：使用说明和常见问题
 - **数据重置**：清除所有本地数据
 
-## 已知限制
+## 其他
 
-1. **WhisperKit 模型**：首次使用需要 Core ML 模型，已预置在 Resources/WhisperModels 目录
-2. **翻译 API**：使用 Microsoft Translator API，需要网络连接
+1. **转录模型**：使用 openai_whisper-tiny，已预置在 `Resources/WhisperModels/` 目录，无需下载
+2. **翻译API**：使用 Microsoft Translator API，需要网络连接
 
 ## License
 

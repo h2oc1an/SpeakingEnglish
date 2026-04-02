@@ -29,7 +29,7 @@ targets:
       - path: Resources/SampleVideos
         type: folder
         buildPhase: resources
-      - path: WhisperWrapper/whisper.cpp/models
+      - path: Resources/WhisperModels
         buildPhase: resources
     settings:
       base:
