@@ -80,7 +80,7 @@ class TranscriptionService {
     }
 
     /// 提取视频中的音频到临时文件
-    private func extractAudio(from videoURL: URL, progressHandler: ((Double) -> Void)?) async throws -> URL {
+    func extractAudio(from videoURL: URL, progressHandler: ((Double) -> Void)?) async throws -> URL {
         print("开始提取音频，视频路径: \(videoURL.path)")
 
         let asset = AVAsset(url: videoURL)

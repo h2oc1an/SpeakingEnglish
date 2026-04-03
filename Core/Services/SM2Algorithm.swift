@@ -9,6 +9,22 @@ struct SM2Algorithm {
         var nextReviewDate: Date
     }
 
+    /// SM-2 算法参数
+    private enum Config {
+        /// EF 最小值，防止难度过低
+        static let minEasinessFactor: Double = 1.3
+        /// EF 调整基数
+        static let efBase: Double = 0.1
+        /// EF 调整系数
+        static let efModifier: Double = 0.08
+        /// EF 二次调整系数
+        static let efModifierSquared: Double = 0.02
+        /// 首次间隔（天）
+        static let firstInterval = 1
+        /// 第二次间隔（天）
+        static let secondInterval = 6
+    }
+
     /// Quality ratings:
     /// 0 - Complete blackout, no recognition
     /// 1 - Incorrect response, but remembered upon seeing answer
@@ -25,24 +41,28 @@ struct SM2Algorithm {
         // Clamp quality to valid range
         let q = max(0, min(5, quality))
 
-        // Calculate new easiness factor
-        var newEF = easinessFactor + (0.1 - Double(5 - q) * (0.08 + Double(5 - q) * 0.02))
-        newEF = max(1.3, newEF) // EF should never fall below 1.3
+        // 计算新的 EF（easiness factor）
+        // EF' = EF + (0.1 - (5-q) * (0.08 + (5-q) * 0.02))
+        // 答得越差，EF 下降越多
+        let efDelta = Config.efBase - Double(5 - q) * (Config.efModifier + Double(5 - q) * Config.efModifierSquared)
+        var newEF = easinessFactor + efDelta
+        // EF 不能低于 1.3
+        newEF = max(Config.minEasinessFactor, newEF)
 
         var newRepetitions: Int
         var newInterval: Int
 
         if q < 3 {
-            // If response quality is less than 3, reset repetitions
+            // 如果答得不好（质量 < 3），重新开始
             newRepetitions = 0
-            newInterval = 1
+            newInterval = Config.firstInterval
         } else {
             newRepetitions = repetitions + 1
             switch newRepetitions {
             case 1:
-                newInterval = 1
+                newInterval = Config.firstInterval
             case 2:
-                newInterval = 6
+                newInterval = Config.secondInterval
             default:
                 newInterval = Int(Double(interval) * newEF)
             }
@@ -62,14 +82,14 @@ struct SM2Algorithm {
         )
     }
 
-    /// Simplified quality mapping for UI
+    /// 简化的质量评级（对应 UI 按钮）
     enum Quality: Int, CaseIterable {
-        case forgotten = 0      // Complete blackout
-        case hard = 1           // Incorrect, remembered after
-        case difficult = 2      // Incorrect, easily remembered
-        case good = 3           // Correct with effort
-        case easy = 4           // Correct with hesitation
-        case perfect = 5        // Perfect recall
+        case forgotten = 0      // 完全忘记
+        case hard = 1         // 困难，想了一下才想起来
+        case difficult = 2     // 较难，看答案后才想起来
+        case good = 3          // 一般，想起来了
+        case easy = 4          // 简单，有点犹豫
+        case perfect = 5       // 完美，立刻想起来
 
         var displayName: String {
             switch self {
@@ -82,14 +102,15 @@ struct SM2Algorithm {
             }
         }
 
+        /// 颜色 HEX 值
         var color: String {
             switch self {
-            case .forgotten: return "FF3B30" // Red
-            case .hard: return "FF9500"      // Orange
-            case .difficult: return "FFCC00" // Yellow
-            case .good: return "34C759"      // Green
-            case .easy: return "34C759"      // Green
-            case .perfect: return "007AFF"    // Blue
+            case .forgotten: return "FF3B30"  // 红色 - 危险
+            case .hard: return "FF9500"       // 橙色 - 警告
+            case .difficult: return "FFCC00"  // 黄色 - 注意
+            case .good: return "34C759"        // 绿色 - 良好
+            case .easy: return "34C759"        // 绿色 - 良好
+            case .perfect: return "007AFF"      // 蓝色 - 优秀
             }
         }
     }

@@ -1,5 +1,18 @@
 import Foundation
 
+// MARK: - 配置常量
+private enum TranslationConfig {
+    static let authEndpoint = "https://edge.microsoft.com/translate/auth"
+    static let translateEndpoint = "https://api-edge.cognitive.microsofttranslator.com/translate"
+    static let userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)"
+    // Token 有效期 9 分钟（微软建议每 10 分钟刷新一次）
+    static let tokenExpirySeconds: TimeInterval = 540
+    // Token 刷新等待时间
+    static let tokenRefreshWaitNanoseconds: UInt64 = 2_000_000_000
+    // 最大重试次数
+    static let maxRetryAttempts = 3
+}
+
 /// 翻译服务 - 使用 Bing Translator API
 class TranslationService {
     static let shared = TranslationService()
@@ -9,9 +22,6 @@ class TranslationService {
     private var tokenExpiry: Date?
     private var isRefreshingToken = false
     private let session: URLSession
-
-    private let authEndpoint = "https://edge.microsoft.com/translate/auth"
-    private let translateEndpoint = "https://api-edge.cognitive.microsofttranslator.com/translate"
 
     private init() {
         let config = URLSessionConfiguration.default
@@ -26,33 +36,25 @@ class TranslationService {
         guard !isRefreshingToken else { return }
         isRefreshingToken = true
 
-        guard let url = URL(string: authEndpoint) else {
+        guard let url = URL(string: TranslationConfig.authEndpoint) else {
             isRefreshingToken = false
             return
         }
 
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.setValue("Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)", forHTTPHeaderField: "User-Agent")
+        request.setValue(TranslationConfig.userAgent, forHTTPHeaderField: "User-Agent")
 
         let task = session.dataTask(with: request) { [weak self] data, response, error in
             self?.isRefreshingToken = false
             guard let data = data, error == nil, let token = String(data: data, encoding: .utf8) else {
+                print("Token 刷新失败: \(error?.localizedDescription ?? "未知错误")")
                 return
             }
             self?.authToken = token
-            self?.tokenExpiry = Date().addingTimeInterval(540)
+            self?.tokenExpiry = Date().addingTimeInterval(TranslationConfig.tokenExpirySeconds)
         }
         task.resume()
-    }
-
-    /// 确保有有效 Token
-    private func ensureTokenSync() -> String? {
-        if let token = authToken, let expiry = tokenExpiry, Date() < expiry {
-            return token
-        }
-        refreshToken()
-        return nil
     }
 
     /// 翻译文本
@@ -62,42 +64,42 @@ class TranslationService {
             return cached
         }
 
-        // 等待 Token 准备好
-        try await prepareToken()
-
-        guard let token = authToken else {
-            throw TranslationError.authenticationFailed
-        }
+        // 获取 Token，带重试
+        let token = try await getTokenWithRetry()
 
         return try await performTranslate(text: text, token: token)
     }
 
-    /// 准备 Token
-    private func prepareToken() async throws {
-        if let token = authToken, let expiry = tokenExpiry, Date() < expiry {
-            return
+    /// 获取 Token（带重试）
+    private func getTokenWithRetry() async throws -> String {
+        for attempt in 1...TranslationConfig.maxRetryAttempts {
+            if let token = authToken, let expiry = tokenExpiry, Date() < expiry {
+                return token
+            }
+
+            if attempt == 1 {
+                refreshToken()
+            }
+
+            try await Task.sleep(nanoseconds: TranslationConfig.tokenRefreshWaitNanoseconds)
+
+            if let token = authToken, let expiry = tokenExpiry, Date() < expiry {
+                return token
+            }
         }
 
-        // 刷新 Token
-        refreshToken()
-
-        // 等待 Token 刷新完成
-        try await Task.sleep(nanoseconds: 2_000_000_000) // 2秒
-
-        if authToken == nil {
-            throw TranslationError.authenticationFailed
-        }
+        throw TranslationError.authenticationFailed
     }
 
     /// 执行翻译请求
     private func performTranslate(text: String, token: String) async throws -> String {
-        guard let url = URL(string: translateEndpoint + "?api-version=3.0&to=zh-Hans") else {
+        guard let url = URL(string: TranslationConfig.translateEndpoint + "?api-version=3.0&to=zh-Hans") else {
             throw TranslationError.invalidURL
         }
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.setValue("Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)", forHTTPHeaderField: "User-Agent")
+        request.setValue(TranslationConfig.userAgent, forHTTPHeaderField: "User-Agent")
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
@@ -146,16 +148,22 @@ class TranslationService {
         return String(str[range])
     }
 
-    /// 批量翻译
+    /// 批量翻译（并行）
     func translateBatch(_ texts: [String]) async throws -> [String] {
-        var results: [String] = []
+        try await withThrowingTaskGroup(of: (Int, String).self) { group in
+            for (index, text) in texts.enumerated() {
+                group.addTask {
+                    let translation = try await self.translate(text)
+                    return (index, translation)
+                }
+            }
 
-        for text in texts {
-            let translation = try await translate(text)
-            results.append(translation)
+            var results = [String](repeating: "", count: texts.count)
+            for try await (index, translation) in group {
+                results[index] = translation
+            }
+            return results
         }
-
-        return results
     }
 }
 

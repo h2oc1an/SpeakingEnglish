@@ -200,7 +200,7 @@ struct SubtitleOverlayView: View {
     var body: some View {
         VStack(spacing: 12) {
             if let subtitle = currentSubtitle {
-                let (englishText, chineseText) = parseBilingualText(subtitle.text)
+                let (englishText, chineseText) = BilingualTextParser.parse(subtitle.text)
 
                 EnglishSubtitleView(text: englishText, onWordTap: onWordTap)
 
@@ -229,53 +229,7 @@ struct SubtitleOverlayView: View {
         )
     }
 
-    private func parseBilingualText(_ text: String) -> (String, String) {
-        let separators = [" - ", " / ", "｜", " | ", "\n"]
-        for separator in separators {
-            if let range = text.range(of: separator) {
-                let part1 = String(text[..<range.lowerBound]).trimmingCharacters(in: .whitespaces)
-                let part2 = String(text[range.upperBound...]).trimmingCharacters(in: .whitespaces)
-                if !part1.isEmpty && !part2.isEmpty {
-                    if containsChinese(part2) {
-                        return (part1, part2)
-                    } else if containsChinese(part1) {
-                        return (part2, part1)
-                    }
-                }
-            }
-        }
-        if containsChinese(text) {
-            return extractEnglishAndChinese(from: text)
-        }
-        return (text, "")
     }
-
-    private func containsChinese(_ text: String) -> Bool {
-        for scalar in text.unicodeScalars {
-            if scalar.value >= 0x4E00 && scalar.value <= 0x9FFF {
-                return true
-            }
-        }
-        return false
-    }
-
-    private func extractEnglishAndChinese(from text: String) -> (String, String) {
-        var chineseStartIndex: String.Index?
-        for (index, char) in text.enumerated() {
-            let scalar = char.unicodeScalars.first!
-            if scalar.value >= 0x4E00 && scalar.value <= 0x9FFF {
-                chineseStartIndex = text.index(text.startIndex, offsetBy: index)
-                break
-            }
-        }
-        if let chineseIndex = chineseStartIndex {
-            let englishPart = String(text[..<chineseIndex]).trimmingCharacters(in: .whitespaces)
-            let chinesePart = String(text[chineseIndex...]).trimmingCharacters(in: .whitespaces)
-            return (englishPart, chinesePart)
-        }
-        return (text, "")
-    }
-}
 
 // MARK: - Minimal Subtitle View (Floating, No Background)
 struct MinimalSubtitleView: View {
@@ -285,7 +239,7 @@ struct MinimalSubtitleView: View {
     var body: some View {
         VStack(spacing: 8) {
             if let subtitle = currentSubtitle {
-                let (englishText, chineseText) = parseBilingualText(subtitle.text)
+                let (englishText, chineseText) = BilingualTextParser.parse(subtitle.text)
 
                 MinimalEnglishSubtitleView(text: englishText, onWordTap: onWordTap)
 
@@ -298,53 +252,6 @@ struct MinimalSubtitleView: View {
                 }
             }
         }
-    }
-
-    private func parseBilingualText(_ text: String) -> (String, String) {
-        let separators = [" - ", " / ", "｜", " | ", "\n"]
-        for separator in separators {
-            if let range = text.range(of: separator) {
-                let part1 = String(text[..<range.lowerBound]).trimmingCharacters(in: .whitespaces)
-                let part2 = String(text[range.upperBound...]).trimmingCharacters(in: .whitespaces)
-                if !part1.isEmpty && !part2.isEmpty {
-                    if containsChinese(part2) {
-                        return (part1, part2)
-                    } else if containsChinese(part1) {
-                        return (part2, part1)
-                    }
-                }
-            }
-        }
-        if containsChinese(text) {
-            return extractEnglishAndChinese(from: text)
-        }
-        return (text, "")
-    }
-
-    private func containsChinese(_ text: String) -> Bool {
-        for scalar in text.unicodeScalars {
-            if scalar.value >= 0x4E00 && scalar.value <= 0x9FFF {
-                return true
-            }
-        }
-        return false
-    }
-
-    private func extractEnglishAndChinese(from text: String) -> (String, String) {
-        var chineseStartIndex: String.Index?
-        for (index, char) in text.enumerated() {
-            let scalar = char.unicodeScalars.first!
-            if scalar.value >= 0x4E00 && scalar.value <= 0x9FFF {
-                chineseStartIndex = text.index(text.startIndex, offsetBy: index)
-                break
-            }
-        }
-        if let chineseIndex = chineseStartIndex {
-            let englishPart = String(text[..<chineseIndex]).trimmingCharacters(in: .whitespaces)
-            let chinesePart = String(text[chineseIndex...]).trimmingCharacters(in: .whitespaces)
-            return (englishPart, chinesePart)
-        }
-        return (text, "")
     }
 }
 

@@ -133,7 +133,17 @@ class TranscriptionTaskManager: ObservableObject {
                 await MainActor.run {
                     self.updateProgress(taskID, progress: 0.1, message: "正在提取音频...")
                 }
-                let audioURL = try await self.extractAudio(from: videoURL)
+                let audioURL = try await transcriptionService.extractAudio(from: videoURL) { progress in
+                    let overallProgress = 0.1 + (progress * 0.2)
+                    Task { @MainActor in
+                        self.updateProgress(taskID, progress: overallProgress, message: "正在提取音频...")
+                    }
+                }
+
+                // 使用 defer 确保临时文件被清理
+                defer {
+                    try? FileManager.default.removeItem(at: audioURL)
+                }
 
                 try Task.checkCancellation()
 
@@ -159,9 +169,6 @@ class TranscriptionTaskManager: ObservableObject {
                 }
 
                 try Task.checkCancellation()
-
-                // 清理音频文件
-                try? FileManager.default.removeItem(at: audioURL)
 
                 // 生成字幕文件
                 await MainActor.run {
@@ -191,33 +198,6 @@ class TranscriptionTaskManager: ObservableObject {
                 }
             }
         }
-    }
-
-    /// 从视频提取音频
-    private func extractAudio(from videoURL: URL) async throws -> URL {
-        let asset = AVAsset(url: videoURL)
-
-        guard let exportSession = AVAssetExportSession(
-            asset: asset,
-            presetName: AVAssetExportPresetAppleM4A
-        ) else {
-            throw TranscriptionError.exportFailed
-        }
-
-        let outputURL = FileManager.default.temporaryDirectory
-            .appendingPathComponent(UUID().uuidString)
-            .appendingPathExtension("m4a")
-
-        exportSession.outputURL = outputURL
-        exportSession.outputFileType = .m4a
-
-        await exportSession.export()
-
-        if let error = exportSession.error {
-            throw error
-        }
-
-        return outputURL
     }
 
     /// 更新任务进度
