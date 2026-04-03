@@ -1,4 +1,8 @@
-# SpeakingEnglish/讲英格力士
+<p align="center">
+  <img src="Resources/logo.png" alt="SpeakingEnglish" width="256"/>
+</p>
+
+<h1 align="center">SpeakingEnglish/讲英格力士</h1>
 
 一款帮助用户通过视频学习英语等多种语言的 iOS 应用，支持本地视频播放、视频语音转录（多语言识别->字幕文件）、字幕翻译（多语言->中文）、字幕生词本等功能。
 
