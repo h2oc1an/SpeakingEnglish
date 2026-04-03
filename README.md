@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="Resources/logo.png" alt="SpeakingEnglish" width="256"/>
+  <img src="Resources/logo.png" alt="SpeakingEnglish" width="200"/>
 </p>
 
 <h1 align="center">SpeakingEnglish/讲英格力士</h1>
@@ -80,11 +80,14 @@ SpeakingEnglish/
 ├── Shared/                # 共享组件
 │   ├── DocumentPicker.swift
 │   ├── SubtitleListView.swift
+│   ├── BilingualTextParser.swift
 │   └── Extensions/
 ├── Resources/
+│   ├── Assets.xcassets/  # App Icon
 │   ├── Info.plist
 │   ├── WhisperModels/     # WhisperKit 本地模型
-│   └── SampleVideos/       # 示例视频目录
+│   ├── logo.png           # App Logo
+│   └── SampleVideos/      # 示例视频目录
 └── project.yml            # XcodeGen 配置
 ```
 
