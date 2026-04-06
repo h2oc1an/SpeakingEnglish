@@ -24,6 +24,7 @@ struct TranslationTask: Identifiable, Codable, Hashable {
     var completedAt: Date?
     var errorMessage: String?
     var entryCount: Int
+    var subtitleMode: SubtitleMode  // 字幕模式
 
     init(
         id: UUID = UUID(),
@@ -35,7 +36,8 @@ struct TranslationTask: Identifiable, Codable, Hashable {
         createdAt: Date = Date(),
         completedAt: Date? = nil,
         errorMessage: String? = nil,
-        entryCount: Int = 0
+        entryCount: Int = 0,
+        subtitleMode: SubtitleMode = .chinese
     ) {
         self.id = id
         self.sourcePath = sourcePath
@@ -47,6 +49,7 @@ struct TranslationTask: Identifiable, Codable, Hashable {
         self.completedAt = completedAt
         self.errorMessage = errorMessage
         self.entryCount = entryCount
+        self.subtitleMode = subtitleMode
     }
 }
 
@@ -96,17 +99,18 @@ class TranslationTaskManager: ObservableObject {
     // MARK: - Task Management
 
     /// 添加并开始翻译任务
-    func startTranslation(sourcePath: String, entryCount: Int) -> UUID {
-        let taskID = addTask(sourcePath: sourcePath, entryCount: entryCount)
+    func startTranslation(sourcePath: String, entryCount: Int, subtitleMode: SubtitleMode = .chinese) -> UUID {
+        let taskID = addTask(sourcePath: sourcePath, entryCount: entryCount, subtitleMode: subtitleMode)
         executeTask(taskID)
         return taskID
     }
 
     /// 添加任务到队列
-    func addTask(sourcePath: String, entryCount: Int) -> UUID {
+    func addTask(sourcePath: String, entryCount: Int, subtitleMode: SubtitleMode = .chinese) -> UUID {
         let task = TranslationTask(
             sourcePath: sourcePath,
-            entryCount: entryCount
+            entryCount: entryCount,
+            subtitleMode: subtitleMode
         )
         tasks.insert(task, at: 0)
         saveTasks()
@@ -127,6 +131,28 @@ class TranslationTaskManager: ObservableObject {
             guard let self = self else { return }
 
             let sourcePath = self.tasks.first { $0.id == taskID }?.sourcePath ?? ""
+            let subtitleMode = self.tasks.first { $0.id == taskID }?.subtitleMode ?? .chinese
+
+            // 如果是原字幕模式，直接复制文件
+            if subtitleMode == .original {
+                await self.updateProgress(taskID, progress: 0.5, message: "复制字幕文件...")
+
+                let sourceURL = URL(fileURLWithPath: sourcePath)
+                let tempDir = FileManager.default.temporaryDirectory
+                let fileName = sourceURL.lastPathComponent
+                let resultURL = tempDir.appendingPathComponent(fileName)
+
+                do {
+                    if FileManager.default.fileExists(atPath: resultURL.path) {
+                        try FileManager.default.removeItem(at: resultURL)
+                    }
+                    try FileManager.default.copyItem(at: sourceURL, to: resultURL)
+                    await self.completeTask(taskID, resultPath: resultURL.path)
+                } catch {
+                    await self.failTaskUI(taskID, error: error.localizedDescription)
+                }
+                return
+            }
 
             do {
                 try Task.checkCancellation()
@@ -155,6 +181,12 @@ class TranslationTaskManager: ObservableObject {
                     do {
                         let translation = try await self.translationService.translate(entries[i].text)
                         entries[i].translation = translation
+
+                        // 如果是中文字幕模式，用翻译替换原文
+                        if subtitleMode == .chinese {
+                            entries[i].text = translation
+                            entries[i].translation = nil
+                        }
                     } catch {
                         print("翻译第 \(i + 1) 条失败: \(error)")
                         entries[i].translation = "[翻译失败]"
@@ -166,7 +198,12 @@ class TranslationTaskManager: ObservableObject {
 
                 try Task.checkCancellation()
 
-                let srtContent = self.transcriptionService.generateTranslatedSRT(from: entries)
+                let srtContent: String
+                if subtitleMode == .bilingual {
+                    srtContent = self.transcriptionService.generateTranslatedSRT(from: entries)
+                } else {
+                    srtContent = self.transcriptionService.generateSRT(from: entries)
+                }
                 let tempDir = FileManager.default.temporaryDirectory
                 let fileName = sourceURL.deletingPathExtension().lastPathComponent + "_cn.srt"
                 let resultURL = tempDir.appendingPathComponent(fileName)

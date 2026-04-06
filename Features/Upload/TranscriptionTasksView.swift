@@ -4,6 +4,9 @@ struct TranscriptionTasksView: View {
     @StateObject private var taskManager = TranscriptionTaskManager.shared
     @StateObject private var translationManager = TranslationTaskManager.shared
     @State private var selectedTaskID: UUID?
+    @State private var showToast = false
+    @State private var toastMessage = ""
+    @State private var toastStyle: ToastView.ToastStyle = .success
 
     private var selectedTask: TranscriptionTask? {
         taskManager.tasks.first { $0.id == selectedTaskID }
@@ -39,6 +42,15 @@ struct TranscriptionTasksView: View {
                     TaskDetailView(task: task)
                 }
             }
+            .toast(isPresented: $showToast, message: toastMessage, style: toastStyle)
+        }
+    }
+
+    private func showToastMessage(_ message: String, style: ToastView.ToastStyle) {
+        toastMessage = message
+        toastStyle = style
+        withAnimation {
+            showToast = true
         }
     }
 
@@ -68,9 +80,35 @@ struct TranscriptionTasksView: View {
                             selectedTaskID = task.id
                         }
                     }
+                    .contextMenu {
+                        if task.status == .completed {
+                            Button {
+                                importTask(task)
+                                showToastMessage("已导入到视频库", style: .success)
+                            } label: {
+                                Label("导入到视频库", systemImage: "square.and.arrow.down")
+                            }
+                        }
+
+                        Button {
+                            selectedTaskID = task.id
+                        } label: {
+                            Label("查看详情", systemImage: "info.circle")
+                        }
+
+                        Divider()
+
+                        Button(role: .destructive) {
+                            taskManager.deleteTask(task.id)
+                            showToastMessage("任务已删除", style: .info)
+                        } label: {
+                            Label("删除", systemImage: "trash")
+                        }
+                    }
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         Button(role: .destructive) {
                             taskManager.deleteTask(task.id)
+                            showToastMessage("任务已删除", style: .info)
                         } label: {
                             Label("删除", systemImage: "trash")
                         }
@@ -89,6 +127,36 @@ struct TranscriptionTasksView: View {
         }
         .listStyle(.plain)
     }
+
+    private func importTask(_ task: TranscriptionTask) {
+        let uploadService = UploadService.shared
+
+        Task { @MainActor in
+            do {
+                let thumbnailPath = uploadService.generateThumbnail(for: task.videoPath)
+                let duration = uploadService.getVideoDuration(for: task.videoPath)
+
+                var subPath: String?
+                if let originalSubtitlePath = task.subtitlePath {
+                    subPath = try uploadService.copySubtitleToDocuments(from: URL(fileURLWithPath: originalSubtitlePath))
+                }
+
+                let video = Video(
+                    title: task.videoTitle,
+                    localPath: task.videoPath,
+                    thumbnailPath: thumbnailPath,
+                    duration: duration,
+                    subtitlePath: subPath
+                )
+
+                let repository = VideoRepository()
+                try repository.save(video)
+
+            } catch {
+                print("导入失败: \(error)")
+            }
+        }
+    }
 }
 
 struct TaskRowView: View {
@@ -100,6 +168,14 @@ struct TaskRowView: View {
                 Text(task.videoTitle)
                     .font(.headline)
                     .lineLimit(1)
+
+                Text(task.subtitleMode.displayName)
+                    .font(.caption2)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(tagBackgroundColor)
+                    .foregroundColor(tagForegroundColor)
+                    .cornerRadius(4)
 
                 Spacer()
 
@@ -115,21 +191,33 @@ struct TaskRowView: View {
                     .progressViewStyle(.linear)
             }
 
-            HStack {
-                Text(task.createdAt.formatted(date: .abbreviated, time: .shortened))
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
-
-                Spacer()
-
-                if let completedAt = task.completedAt {
-                    Text("完成于 \(completedAt.formatted(date: .omitted, time: .shortened))")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                }
-            }
+            Text(task.createdAt.formatted(date: .abbreviated, time: .shortened))
+                .font(.caption2)
+                .foregroundColor(.secondary)
         }
         .padding(.vertical, 4)
+    }
+
+    private var tagBackgroundColor: Color {
+        switch task.subtitleMode {
+        case .original:
+            return Color.gray.opacity(0.2)
+        case .chinese:
+            return Color.blue.opacity(0.2)
+        case .bilingual:
+            return Color.orange.opacity(0.2)
+        }
+    }
+
+    private var tagForegroundColor: Color {
+        switch task.subtitleMode {
+        case .original:
+            return .gray
+        case .chinese:
+            return .blue
+        case .bilingual:
+            return .orange
+        }
     }
 
     @ViewBuilder
@@ -231,8 +319,8 @@ struct TaskDetailView: View {
                             }
                         }
 
-                        // 翻译按钮
-                        if let subPath = subtitlePath {
+                        // 翻译按钮 - 只有原字幕模式才需要翻译
+                        if let subPath = subtitlePath, task.subtitleMode == .original {
                             Button(action: { startTranslation(subtitlePath: subPath) }) {
                                 HStack {
                                     Image(systemName: "character.bubble")

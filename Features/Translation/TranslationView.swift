@@ -4,6 +4,8 @@ import UniformTypeIdentifiers
 struct TranslationView: View {
     @StateObject private var translationManager = TranslationTaskManager.shared
     @State private var showSubtitlePicker = false
+    @State private var selectedSubtitleURL: URL?
+    @State private var selectedSubtitleMode: SubtitleMode = .chinese
     @State private var selectedTaskID: UUID?
 
     private var selectedTask: TranslationTask? {
@@ -15,20 +17,61 @@ struct TranslationView: View {
             Form {
                 // 字幕翻译区域
                 Section {
-                    Button(action: { showSubtitlePicker = true }) {
+                    if let url = selectedSubtitleURL {
                         HStack {
-                            Image(systemName: "doc.text")
+                            Image(systemName: "doc.text.fill")
                                 .foregroundColor(.orange)
-                            Text("选择字幕文件翻译")
+                            Text(url.lastPathComponent)
+                                .lineLimit(1)
                             Spacer()
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(.secondary)
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.green)
+                        }
+
+                        Button(role: .destructive, action: {
+                            selectedSubtitleURL = nil
+                        }) {
+                            Label("移除文件", systemImage: "trash")
+                        }
+
+                        HStack {
+                            Image(systemName: "text.bubble")
+                                .foregroundColor(.orange)
+                            Picker("字幕模式", selection: $selectedSubtitleMode) {
+                                ForEach(SubtitleMode.translationModes, id: \.self) { mode in
+                                    Text(mode.displayName).tag(mode)
+                                }
+                            }
+                            .pickerStyle(.segmented)
+                        }
+                        .padding(.vertical, 4)
+
+                        Button(action: {
+                            startTranslation()
+                        }) {
+                            HStack {
+                                Image(systemName: "character.bubble")
+                                    .foregroundColor(.purple)
+                                Text("开始翻译")
+                                Spacer()
+                            }
+                        }
+                    } else {
+                        Button(action: { showSubtitlePicker = true }) {
+                            HStack {
+                                Image(systemName: "doc.text")
+                                    .foregroundColor(.orange)
+                                Text("选择字幕文件")
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.secondary)
+                            }
                         }
                     }
                 } header: {
                     Text("字幕翻译")
                 } footer: {
-                    Text("选择 SRT、ASS 格式字幕文件，翻译为中文")
+                    Text(subtitleFooterText)
                 }
 
                 // 翻译任务列表
@@ -38,6 +81,27 @@ struct TranslationView: View {
                             TranslationTaskRowView(task: task)
                                 .onTapGesture {
                                     selectedTaskID = task.id
+                                }
+                                .contextMenu {
+                                    if task.status == .completed, let resultPath = task.resultPath {
+                                        ShareLink(item: URL(fileURLWithPath: resultPath)) {
+                                            Label("导出字幕", systemImage: "square.and.arrow.up")
+                                        }
+                                    }
+
+                                    Button {
+                                        selectedTaskID = task.id
+                                    } label: {
+                                        Label("查看详情", systemImage: "info.circle")
+                                    }
+
+                                    Divider()
+
+                                    Button(role: .destructive) {
+                                        translationManager.deleteTask(task.id)
+                                    } label: {
+                                        Label("删除", systemImage: "trash")
+                                    }
                                 }
                                 .swipeActions(edge: .trailing) {
                                     Button(role: .destructive) {
@@ -73,7 +137,7 @@ struct TranslationView: View {
                 }
 
                 // 空状态
-                if translationManager.tasks.isEmpty {
+                if translationManager.tasks.isEmpty && selectedSubtitleURL == nil {
                     Section {
                         VStack(spacing: 16) {
                             Image(systemName: "character.bubble")
@@ -104,11 +168,37 @@ struct TranslationView: View {
             }
             .sheet(isPresented: $showSubtitlePicker) {
                 SubtitlePickerView { url in
-                    translationManager.startTranslation(sourcePath: url.path, entryCount: 0)
+                    selectedSubtitleURL = url
                     showSubtitlePicker = false
                 }
             }
         }
+    }
+
+    private var subtitleFooterText: String {
+        if selectedSubtitleURL == nil {
+            return "选择 SRT、ASS 格式字幕文件"
+        }
+        switch selectedSubtitleMode {
+        case .chinese:
+            return "翻译为中文，用中文替换原文"
+        case .bilingual:
+            return "翻译为中文，同时保留原文"
+        default:
+            return ""
+        }
+    }
+
+    private func startTranslation() {
+        guard let url = selectedSubtitleURL else { return }
+
+        translationManager.startTranslation(
+            sourcePath: url.path,
+            entryCount: 0,
+            subtitleMode: selectedSubtitleMode
+        )
+
+        selectedSubtitleURL = nil
     }
 }
 
@@ -124,9 +214,29 @@ struct TranslationTaskRowView: View {
                     .font(.headline)
                     .lineLimit(1)
 
+                if task.subtitleMode == .bilingual {
+                    Text("双语")
+                        .font(.caption2)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.orange.opacity(0.2))
+                        .foregroundColor(.orange)
+                        .cornerRadius(4)
+                } else {
+                    Text("中文")
+                        .font(.caption2)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.blue.opacity(0.2))
+                        .foregroundColor(.blue)
+                        .cornerRadius(4)
+                }
+
                 Spacer()
 
-                statusBadge
+                Text(task.createdAt.formatted(date: .abbreviated, time: .shortened))
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
             }
 
             if task.status == .inProgress {

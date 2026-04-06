@@ -13,6 +13,20 @@ enum TranscriptionTaskStatus: String, Codable {
     case cancelled = "已取消"
 }
 
+/// 字幕模式
+enum SubtitleMode: String, Codable, CaseIterable {
+    case original = "原字幕"      // 只显示原文
+    case chinese = "中文字幕"      // 只显示中文
+    case bilingual = "双语字幕"     // 同时显示原文和中文
+
+    var displayName: String { rawValue }
+
+    /// 翻译页面可用的模式（排除原字幕）
+    static var translationModes: [SubtitleMode] {
+        [.chinese, .bilingual]
+    }
+}
+
 /// 转录任务模型
 struct TranscriptionTask: Identifiable, Codable {
     let id: UUID
@@ -26,6 +40,7 @@ struct TranscriptionTask: Identifiable, Codable {
     var completedAt: Date?
     var errorMessage: String?
     var entries: [SubtitleEntry]?
+    var subtitleMode: SubtitleMode  // 字幕模式
 
     init(id: UUID = UUID(),
          videoTitle: String,
@@ -34,7 +49,8 @@ struct TranscriptionTask: Identifiable, Codable {
          status: TranscriptionTaskStatus = .queued,
          progress: Double = 0,
          statusMessage: String = "等待中...",
-         createdAt: Date = Date()) {
+         createdAt: Date = Date(),
+         subtitleMode: SubtitleMode = .original) {
         self.id = id
         self.videoTitle = videoTitle
         self.videoPath = videoPath
@@ -46,6 +62,17 @@ struct TranscriptionTask: Identifiable, Codable {
         self.completedAt = nil
         self.errorMessage = nil
         self.entries = nil
+        self.subtitleMode = subtitleMode
+    }
+
+    /// 是否需要翻译
+    var needsTranslation: Bool {
+        subtitleMode != .original
+    }
+
+    /// 是否需要双语（原文+翻译）
+    var needsBilingual: Bool {
+        subtitleMode == .bilingual
     }
 }
 
@@ -92,17 +119,18 @@ class TranscriptionTaskManager: ObservableObject {
     // MARK: - Task Management
 
     /// 添加并开始转录任务
-    func startTranscription(videoTitle: String, videoPath: String) -> UUID {
-        let taskID = addTask(videoTitle: videoTitle, videoPath: videoPath)
+    func startTranscription(videoTitle: String, videoPath: String, subtitleMode: SubtitleMode = .original) -> UUID {
+        let taskID = addTask(videoTitle: videoTitle, videoPath: videoPath, subtitleMode: subtitleMode)
         executeTask(taskID)
         return taskID
     }
 
     /// 添加任务到队列
-    func addTask(videoTitle: String, videoPath: String) -> UUID {
+    func addTask(videoTitle: String, videoPath: String, subtitleMode: SubtitleMode = .original) -> UUID {
         let task = TranscriptionTask(
             videoTitle: videoTitle,
-            videoPath: videoPath
+            videoPath: videoPath,
+            subtitleMode: subtitleMode
         )
         tasks.insert(task, at: 0)
         saveTasks()
@@ -161,10 +189,46 @@ class TranscriptionTaskManager: ObservableObject {
                 await MainActor.run {
                     self.updateProgress(taskID, progress: 0.3, message: "正在转录...")
                 }
-                let entries = try await transcriptionService.transcribeWithWhisperKit(audioURL: audioURL) { [weak self] progress, status in
+                var entries = try await transcriptionService.transcribeWithWhisperKit(audioURL: audioURL) { [weak self] progress, status in
                     Task { @MainActor in
                         let overallProgress = 0.3 + (progress * 0.6)
                         self?.updateProgress(taskID, progress: overallProgress, message: status)
+                    }
+                }
+
+                // 检查是否需要翻译
+                let subtitleMode = self.tasks.first { $0.id == taskID }?.subtitleMode ?? .original
+                if subtitleMode != .original {
+                    try Task.checkCancellation()
+
+                    // 翻译为中文
+                    await MainActor.run {
+                        self.updateProgress(taskID, progress: 0.9, message: "正在翻译为中文...")
+                    }
+
+                    let translationService = TranslationService.shared
+                    for i in 0..<entries.count {
+                        try Task.checkCancellation()
+                        let originalText = entries[i].text
+                        if !originalText.isEmpty {
+                            do {
+                                let translation = try await translationService.translate(originalText)
+                                entries[i].translation = translation
+                            } catch {
+                                print("翻译失败: \(error)")
+                                entries[i].translation = ""
+                            }
+                        }
+                    }
+
+                    // 如果是"只显示中文"模式，将翻译内容替换原文
+                    if subtitleMode == .chinese {
+                        for i in 0..<entries.count {
+                            if let translation = entries[i].translation, !translation.isEmpty {
+                                entries[i].text = translation
+                                entries[i].translation = nil
+                            }
+                        }
                     }
                 }
 
@@ -174,7 +238,12 @@ class TranscriptionTaskManager: ObservableObject {
                 await MainActor.run {
                     self.updateProgress(taskID, progress: 0.95, message: "正在保存字幕...")
                 }
-                let srtContent = transcriptionService.generateSRT(from: entries)
+                let srtContent: String
+                if subtitleMode == .bilingual {
+                    srtContent = transcriptionService.generateTranslatedSRT(from: entries)
+                } else {
+                    srtContent = transcriptionService.generateSRT(from: entries)
+                }
 
                 let tempDir = FileManager.default.temporaryDirectory
                 let videoTitle = self.tasks.first { $0.id == taskID }?.videoTitle ?? "transcript"

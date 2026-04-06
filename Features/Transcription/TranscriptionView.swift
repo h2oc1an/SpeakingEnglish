@@ -6,6 +6,9 @@ struct TranscriptionView: View {
     @StateObject private var taskManager = TranscriptionTaskManager.shared
     @State private var showVideoPicker = false
     @State private var showingTaskDetail: TranscriptionTask?
+    @State private var showToast = false
+    @State private var toastMessage = ""
+    @State private var toastStyle: ToastView.ToastStyle = .success
 
     var body: some View {
         NavigationStack {
@@ -32,6 +35,18 @@ struct TranscriptionView: View {
                             Label("移除视频", systemImage: "trash")
                         }
 
+                        HStack {
+                            Image(systemName: "text.bubble")
+                                .foregroundColor(.orange)
+                            Picker("字幕模式", selection: $viewModel.subtitleMode) {
+                                ForEach(SubtitleMode.allCases, id: \.self) { mode in
+                                    Text(mode.displayName).tag(mode)
+                                }
+                            }
+                            .pickerStyle(.segmented)
+                            .padding(.vertical, 4)
+                        }
+
                         Button(action: {
                             viewModel.startTranscription()
                         }) {
@@ -47,22 +62,7 @@ struct TranscriptionView: View {
                 } header: {
                     Text("视频")
                 } footer: {
-                    Text("选择 MP4 或 MOV 格式的视频，语音将被转录为英文字幕")
-                }
-
-                // 消息
-                if let error = viewModel.errorMessage {
-                    Section {
-                        Text(error)
-                            .foregroundColor(.red)
-                    }
-                }
-
-                if let success = viewModel.successMessage {
-                    Section {
-                        Text(success)
-                            .foregroundColor(.green)
-                    }
+                    Text(subtitleFooterText)
                 }
 
                 // 任务列表
@@ -75,9 +75,35 @@ struct TranscriptionView: View {
                                         showingTaskDetail = task
                                     }
                                 }
+                                .contextMenu {
+                                    if task.status == .completed {
+                                        Button {
+                                            viewModel.importTask(task)
+                                            showToastMessage("已导入到视频库", style: .success)
+                                        } label: {
+                                            Label("导入到视频库", systemImage: "square.and.arrow.down")
+                                        }
+                                    }
+
+                                    Button {
+                                        showingTaskDetail = task
+                                    } label: {
+                                        Label("查看详情", systemImage: "info.circle")
+                                    }
+
+                                    Divider()
+
+                                    Button(role: .destructive) {
+                                        taskManager.deleteTask(task.id)
+                                        showToastMessage("任务已删除", style: .info)
+                                    } label: {
+                                        Label("删除", systemImage: "trash")
+                                    }
+                                }
                                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                     Button(role: .destructive) {
                                         taskManager.deleteTask(task.id)
+                                        showToastMessage("任务已删除", style: .info)
                                     } label: {
                                         Label("删除", systemImage: "trash")
                                     }
@@ -124,6 +150,26 @@ struct TranscriptionView: View {
             .sheet(item: $showingTaskDetail) { task in
                 TaskDetailView(task: task)
             }
+            .toast(isPresented: $showToast, message: toastMessage, style: toastStyle)
+        }
+    }
+
+    private var subtitleFooterText: String {
+        switch viewModel.subtitleMode {
+        case .original:
+            return "选择 MP4 或 MOV 格式的视频，语音将被转录为字幕"
+        case .chinese:
+            return "转录并翻译为中文，只显示中文字幕"
+        case .bilingual:
+            return "转录原语言并翻译为中文，同时显示原文和中文"
+        }
+    }
+
+    private func showToastMessage(_ message: String, style: ToastView.ToastStyle) {
+        toastMessage = message
+        toastStyle = style
+        withAnimation {
+            showToast = true
         }
     }
 }
