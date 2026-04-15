@@ -10,6 +10,7 @@ protocol VideoRepositoryProtocol {
 }
 
 class VideoRepository: VideoRepositoryProtocol {
+    static let shared = VideoRepository()
     private let db: Connection?
     private let manager = DatabaseManager.shared
 
@@ -91,6 +92,35 @@ class VideoRepository: VideoRepositoryProtocol {
 
         let query = manager.videos.filter(manager.videoId == id.uuidString)
         try db.run(query.delete())
+    }
+
+    // MARK: - Playback Position & Rate
+
+    func getLastPlaybackPosition(for videoId: UUID) -> Double {
+        guard let db = db else { return 0 }
+        let query = manager.videos.filter(manager.videoId == videoId.uuidString)
+        guard let row = try? db.pluck(query) else { return 0 }
+        return row[manager.videoLastPlaybackPosition]
+    }
+
+    func saveLastPlaybackPosition(for videoId: UUID, position: Double) {
+        guard let db = db else { return }
+        let query = manager.videos.filter(manager.videoId == videoId.uuidString)
+        try? db.run(query.update(manager.videoLastPlaybackPosition <- position))
+    }
+
+    func getPlaybackRate(for videoId: UUID) -> Float? {
+        guard let db = db else { return nil }
+        let query = manager.videos.filter(manager.videoId == videoId.uuidString)
+        guard let row = try? db.pluck(query) else { return nil }
+        let rate = row[manager.videoPlaybackRate]
+        return Float(rate)
+    }
+
+    func savePlaybackRate(for videoId: UUID, rate: Float) {
+        guard let db = db else { return }
+        let query = manager.videos.filter(manager.videoId == videoId.uuidString)
+        try? db.run(query.update(manager.videoPlaybackRate <- Double(rate)))
     }
 }
 

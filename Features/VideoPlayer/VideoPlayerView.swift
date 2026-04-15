@@ -34,6 +34,12 @@ struct VideoPlayerView: View {
                 SubtitleShareView(subtitlePath: subtitlePath, videoTitle: video.title)
             }
         }
+        .sheet(isPresented: $viewModel.showingBookmarkSheet) {
+            BookmarkListSheet(viewModel: viewModel)
+        }
+        .sheet(isPresented: $viewModel.showingAddBookmark) {
+            AddBookmarkSheet(viewModel: viewModel)
+        }
         .onAppear {
             if !hasInitialized {
                 hasInitialized = true
@@ -68,23 +74,43 @@ struct VideoPlayerView: View {
 
                 Spacer()
 
-                // 字幕下载/分享按钮
-                if video.subtitlePath != nil {
-                    Button(action: { showSubtitleShare = true }) {
-                        Image(systemName: "caption.bubble.fill")
-                            .font(.system(size: 18))
-                            .foregroundColor(.white)
-                            .padding(8)
-                            .background(Color.white.opacity(0.2))
-                            .cornerRadius(8)
-                    }
-                    .padding(.trailing, 16)
-                    .padding(.top, 8)
+                // 书签按钮
+                Button(action: { viewModel.showingBookmarkSheet = true }) {
+                    Image(systemName: "bookmark.fill")
+                        .font(.system(size: 18))
+                        .foregroundColor(.white)
+                        .padding(8)
+                        .background(Color.white.opacity(0.2))
+                        .cornerRadius(8)
                 }
+                .padding(.trailing, 8)
+
+                // 添加书签按钮
+                Button(action: { viewModel.showingAddBookmark = true }) {
+                    Image(systemName: "bookmark.badge.plus")
+                        .font(.system(size: 18))
+                        .foregroundColor(.white)
+                        .padding(8)
+                        .background(Color.white.opacity(0.2))
+                        .cornerRadius(8)
+                }
+                .padding(.trailing, 16)
+                .padding(.top, 8)
             }
 
             VideoPlayer(player: viewModel.player)
                 .frame(height: geometry.size.height * 0.35)
+                .overlay(
+                    VideoGestureView(
+                        onSeek: { delta in
+                            let newTime = max(0, min(viewModel.duration, viewModel.currentTime + delta))
+                            viewModel.seek(to: newTime)
+                        },
+                        onDoubleTap: {
+                            viewModel.togglePlayPause()
+                        }
+                    )
+                )
 
             // Minimal Subtitle (no background, with shadow)
             MinimalSubtitleView(
@@ -451,6 +477,9 @@ struct VideoProgressView: View {
 // MARK: - Video Control Bar
 struct VideoControlBar: View {
     @ObservedObject var viewModel: VideoPlayerViewModel
+    @State private var showSpeedPicker = false
+
+    private let speeds: [Float] = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0]
 
     var body: some View {
         HStack(spacing: 40) {
@@ -471,8 +500,124 @@ struct VideoControlBar: View {
                     .font(.title)
                     .foregroundColor(.white)
             }
+
+            // Speed selector
+            Button(action: { showSpeedPicker = true }) {
+                Text(String(format: "%.2gx", viewModel.playbackRate))
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(Color.white.opacity(0.2))
+                    .cornerRadius(8)
+            }
         }
         .padding()
+        .sheet(isPresented: $showSpeedPicker) {
+            SpeedPickerSheet(
+                currentSpeed: viewModel.playbackRate,
+                speeds: speeds,
+                onSelect: { speed in
+                    viewModel.setPlaybackSpeed(speed)
+                    showSpeedPicker = false
+                }
+            )
+            .presentationDetents([.height(300)])
+        }
+    }
+}
+
+// MARK: - Speed Picker Sheet
+struct SpeedPickerSheet: View {
+    let currentSpeed: Float
+    let speeds: [Float]
+    let onSelect: (Float) -> Void
+
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach(speeds, id: \.self) { speed in
+                    Button(action: { onSelect(speed) }) {
+                        HStack {
+                            Text(String(format: "%.2gx", speed))
+                                .font(.headline)
+                            Spacer()
+                            if abs(speed - currentSpeed) < 0.01 {
+                                Image(systemName: "checkmark")
+                                    .foregroundColor(.blue)
+                            }
+                        }
+                    }
+                    .foregroundColor(.primary)
+                }
+            }
+            .navigationTitle("播放速度")
+            .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+}
+
+// MARK: - Video Gesture View
+struct VideoGestureView: View {
+    let onSeek: (TimeInterval) -> Void
+    let onDoubleTap: () -> Void
+
+    @State private var seekDelta: TimeInterval = 0
+    @State private var showSeekIndicator = false
+
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack {
+                // Seek indicator
+                if showSeekIndicator {
+                    SeekIndicatorView(delta: seekDelta)
+                }
+
+                // Gesture recognizers
+                Color.clear
+                    .contentShape(Rectangle())
+                    .gesture(
+                        DragGesture(minimumDistance: 50)
+                            .onEnded { value in
+                                let horizontal = value.translation.width
+                                if abs(horizontal) > 100 {
+                                    let delta = horizontal > 0 ? 10.0 : -10.0
+                                    seekDelta = delta
+                                    showSeekIndicator = true
+                                    onSeek(delta)
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                        showSeekIndicator = false
+                                    }
+                                }
+                            }
+                    )
+                    .simultaneousGesture(
+                        TapGesture(count: 2)
+                            .onEnded {
+                                onDoubleTap()
+                            }
+                    )
+            }
+        }
+    }
+}
+
+// MARK: - Seek Indicator View
+struct SeekIndicatorView: View {
+    let delta: TimeInterval
+
+    var body: some View {
+        HStack(spacing: 20) {
+            Image(systemName: delta < 0 ? "gobackward.10" : "goforward.10")
+                .font(.title)
+            Text(delta < 0 ? "-10s" : "+10s")
+                .font(.headline)
+        }
+        .foregroundColor(.white)
+        .padding(.horizontal, 24)
+        .padding(.vertical, 12)
+        .background(Color.black.opacity(0.7))
+        .cornerRadius(12)
     }
 }
 
@@ -706,6 +851,135 @@ struct SubtitleShareView: View {
         }
 
         showShareSheet = true
+    }
+}
+
+// MARK: - Bookmark List Sheet
+struct BookmarkListSheet: View {
+    @ObservedObject var viewModel: VideoPlayerViewModel
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            Group {
+                if viewModel.bookmarks.isEmpty {
+                    VStack(spacing: 16) {
+                        Image(systemName: "bookmark")
+                            .font(.system(size: 60))
+                            .foregroundColor(.secondary)
+                        Text("暂无书签")
+                            .font(.headline)
+                            .foregroundColor(.secondary)
+                    }
+                } else {
+                    List {
+                        ForEach(viewModel.bookmarks) { bookmark in
+                            BookmarkRow(bookmark: bookmark) {
+                                viewModel.jumpToBookmark(bookmark)
+                                dismiss()
+                            }
+                        }
+                        .onDelete { indexSet in
+                            indexSet.forEach { index in
+                                viewModel.deleteBookmark(viewModel.bookmarks[index])
+                            }
+                        }
+                    }
+                }
+            }
+            .navigationTitle("书签列表")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("关闭") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Bookmark Row
+struct BookmarkRow: View {
+    let bookmark: VideoBookmark
+    let onTap: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(formatTime(bookmark.timestamp))
+                        .font(.headline)
+                    if let note = bookmark.note, !note.isEmpty {
+                        Text(note)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .lineLimit(2)
+                    }
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.secondary)
+            }
+            .padding(.vertical, 4)
+        }
+        .foregroundColor(.primary)
+    }
+
+    private func formatTime(_ time: TimeInterval) -> String {
+        let minutes = Int(time) / 60
+        let seconds = Int(time) % 60
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
+}
+
+// MARK: - Add Bookmark Sheet
+struct AddBookmarkSheet: View {
+    @ObservedObject var viewModel: VideoPlayerViewModel
+    @Environment(\.dismiss) private var dismiss
+    @State private var note: String = ""
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    HStack {
+                        Text("时间")
+                        Spacer()
+                        Text(formatTime(viewModel.currentTime))
+                            .foregroundColor(.secondary)
+                    }
+                }
+
+                Section("备注 (可选)") {
+                    TextField("添加备注...", text: $note, axis: .vertical)
+                        .lineLimit(3...6)
+                }
+            }
+            .navigationTitle("添加书签")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("取消") {
+                        dismiss()
+                    }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("保存") {
+                        viewModel.addBookmark(note: note.isEmpty ? nil : note)
+                        dismiss()
+                    }
+                }
+            }
+        }
+        .presentationDetents([.height(300)])
+    }
+
+    private func formatTime(_ time: TimeInterval) -> String {
+        let minutes = Int(time) / 60
+        let seconds = Int(time) % 60
+        return String(format: "%02d:%02d", minutes, seconds)
     }
 }
 

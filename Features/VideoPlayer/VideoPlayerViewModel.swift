@@ -13,15 +13,35 @@ class VideoPlayerViewModel: ObservableObject {
     @Published var currentTime: TimeInterval = 0
     @Published var duration: TimeInterval = 0
     @Published var showingWordPopup: Bool = false
+    @Published var playbackRate: Float = 1.0
+    @Published var bookmarks: [VideoBookmark] = []
+    @Published var showingBookmarkSheet: Bool = false
+    @Published var showingAddBookmark: Bool = false
 
     private var subtitles: [SubtitleEntry] = []
     private var timeObserver: Any?
     private let srtParser = SRTSubtitleParser()
     private let assParser = ASSSubtitleParser()
+    private let videoRepository = VideoRepository.shared
+    private let bookmarkRepository = VideoBookmarkRepository()
 
     init(video: Video) {
         self.video = video
         self.player = AVPlayer()
+        loadPlaybackSettings()
+        loadBookmarks()
+    }
+
+    private func loadBookmarks() {
+        do {
+            bookmarks = try bookmarkRepository.getAll(for: video.id)
+        } catch {
+            print("Failed to load bookmarks: \(error)")
+        }
+    }
+
+    private func loadPlaybackSettings() {
+        playbackRate = videoRepository.getPlaybackRate(for: video.id) ?? 1.0
     }
 
     func setupPlayer(with video: Video) {
@@ -49,6 +69,12 @@ class VideoPlayerViewModel: ObservableObject {
             name: .AVPlayerItemDidPlayToEndTime,
             object: playerItem
         )
+
+        // Restore last playback position
+        let lastPosition = videoRepository.getLastPlaybackPosition(for: video.id)
+        if lastPosition > 0 && lastPosition < duration - 5 {
+            seek(to: lastPosition)
+        }
     }
 
     private func loadSubtitles() {
@@ -126,8 +152,17 @@ class VideoPlayerViewModel: ObservableObject {
             player.pause()
         } else {
             player.play()
+            player.rate = playbackRate
         }
         isPlaying.toggle()
+    }
+
+    func setPlaybackSpeed(_ speed: Float) {
+        playbackRate = speed
+        if isPlaying {
+            player.rate = speed
+        }
+        videoRepository.savePlaybackRate(for: video.id, rate: speed)
     }
 
     func seek(to time: TimeInterval) {
@@ -157,5 +192,37 @@ class VideoPlayerViewModel: ObservableObject {
         player.pause()
         player.replaceCurrentItem(with: nil)
         NotificationCenter.default.removeObserver(self)
+
+        // Save playback position
+        videoRepository.saveLastPlaybackPosition(for: video.id, position: currentTime)
+    }
+
+    // MARK: - Bookmarks
+
+    func addBookmark(note: String? = nil) {
+        let bookmark = VideoBookmark(
+            videoId: video.id,
+            timestamp: currentTime,
+            note: note
+        )
+        do {
+            try bookmarkRepository.save(bookmark)
+            loadBookmarks()
+        } catch {
+            print("Failed to add bookmark: \(error)")
+        }
+    }
+
+    func deleteBookmark(_ bookmark: VideoBookmark) {
+        do {
+            try bookmarkRepository.delete(bookmark.id)
+            loadBookmarks()
+        } catch {
+            print("Failed to delete bookmark: \(error)")
+        }
+    }
+
+    func jumpToBookmark(_ bookmark: VideoBookmark) {
+        seek(to: bookmark.timestamp)
     }
 }

@@ -10,6 +10,7 @@ class DatabaseManager {
     let videos = Table("videos")
     let vocabularyEntries = Table("vocabulary_entries")
     let reviewRecords = Table("review_records")
+    let videoBookmarks = Table("video_bookmarks")
 
     // Video columns
     let videoId = Expression<String>("id")
@@ -20,6 +21,8 @@ class DatabaseManager {
     let videoSubtitlePath = Expression<String?>("subtitle_path")
     let videoCreatedAt = Expression<String>("created_at")
     let videoLastPlayedAt = Expression<String?>("last_played_at")
+    let videoLastPlaybackPosition = Expression<Double>("last_playback_position")
+    let videoPlaybackRate = Expression<Double>("playback_rate")
 
     // VocabularyEntry columns
     let vocabId = Expression<String>("id")
@@ -43,6 +46,13 @@ class DatabaseManager {
     let reviewRepetition = Expression<Int>("repetition")
     let reviewEasinessFactor = Expression<Double>("easiness_factor")
     let reviewInterval = Expression<Int>("interval_days")
+
+    // VideoBookmark columns
+    let bookmarkId = Expression<String>("id")
+    let bookmarkVideoId = Expression<String>("video_id")
+    let bookmarkTimestamp = Expression<Double>("timestamp")
+    let bookmarkNote = Expression<String?>("note")
+    let bookmarkCreatedAt = Expression<String>("created_at")
 
     private init() {
         do {
@@ -71,6 +81,8 @@ class DatabaseManager {
                 t.column(videoSubtitlePath)
                 t.column(videoCreatedAt)
                 t.column(videoLastPlayedAt)
+                t.column(videoLastPlaybackPosition, defaultValue: 0)
+                t.column(videoPlaybackRate, defaultValue: 1.0)
             })
 
             // Create vocabulary_entries table
@@ -98,6 +110,15 @@ class DatabaseManager {
                 t.column(reviewRepetition)
                 t.column(reviewEasinessFactor)
                 t.column(reviewInterval)
+            })
+
+            // Create video_bookmarks table
+            try db.run(videoBookmarks.create(ifNotExists: true) { t in
+                t.column(bookmarkId, primaryKey: true)
+                t.column(bookmarkVideoId)
+                t.column(bookmarkTimestamp)
+                t.column(bookmarkNote)
+                t.column(bookmarkCreatedAt)
             })
 
         } catch {
