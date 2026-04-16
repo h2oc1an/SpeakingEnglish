@@ -33,5 +33,6 @@ Resources/SampleVideos/
 *.swp
 *~
 
-# Local settings
+# Claude Code
+CLAUDE.md
 .claude/settings.local.json
