@@ -202,5 +202,6 @@ open SpeakingEnglish.xcodeproj
 2. **翻译API**：使用 Microsoft Translator API，需要网络连接
 
 ## License
+## License
 
-MIT License
+See [LICENSE](LICENSE) for details.
