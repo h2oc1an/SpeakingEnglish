@@ -1,22 +1,17 @@
 import SwiftUI
+import Combine
 
 struct VocabularyListView: View {
     @State private var words: [VocabularyEntry] = []
     @State private var searchText: String = ""
     @State private var showingAddWord: Bool = false
     @State private var selectedWord: VocabularyEntry?
-
-    var filteredWords: [VocabularyEntry] {
-        if searchText.isEmpty {
-            return words
-        }
-        return words.filter { $0.word.localizedCaseInsensitiveContains(searchText) }
-    }
+    @State private var searchCancellable: AnyCancellable?
 
     var body: some View {
         NavigationStack {
             List {
-                ForEach(filteredWords) { entry in
+                ForEach(words) { entry in
                     WordRowView(entry: entry)
                         .onTapGesture {
                             selectedWord = entry
@@ -46,6 +41,9 @@ struct VocabularyListView: View {
             .refreshable {
                 loadWords()
             }
+            .onChange(of: searchText) { newValue in
+                performSearchDebounced(query: newValue)
+            }
         }
     }
 
@@ -57,9 +55,28 @@ struct VocabularyListView: View {
         }
     }
 
+    private func performSearchDebounced(query: String) {
+        searchCancellable?.cancel()
+
+        if query.isEmpty {
+            loadWords()
+            return
+        }
+
+        searchCancellable = Just(query)
+            .delay(for: .milliseconds(300), scheduler: DispatchQueue.main)
+            .sink { [self] debouncedQuery in
+                do {
+                    words = try VocabularyService.shared.search(debouncedQuery)
+                } catch {
+                    print("Failed to search words: \(error)")
+                }
+            }
+    }
+
     private func deleteWords(at offsets: IndexSet) {
         for index in offsets {
-            let word = filteredWords[index]
+            let word = words[index]
             do {
                 try VocabularyService.shared.deleteWord(byId: word.id)
                 loadWords()

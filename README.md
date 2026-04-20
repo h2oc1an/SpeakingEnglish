@@ -62,6 +62,7 @@ SpeakingEnglish/
 │   │   ├── Video.swift
 │   │   ├── SubtitleEntry.swift
 │   │   ├── VocabularyEntry.swift
+│   │   ├── VideoBookmark.swift
 │   │   └── ReviewRecord.swift
 │   ├── Services/          # 核心服务
 │   │   ├── TranscriptionService.swift    # WhisperKit 转录
@@ -71,14 +72,18 @@ SpeakingEnglish/
 │   │   ├── SubtitleParser/              # 字幕解析
 │   │   ├── SM2Algorithm.swift            # 间隔重复算法
 │   │   ├── VocabularyService.swift
+│   │   ├── ThumbnailService.swift         # 缩略图生成
+│   │   ├── ImageCacheService.swift       # 图片缓存
 │   │   └── WordExtractionService.swift
 │   └── Persistence/       # 数据持久化
 │       ├── DatabaseManager.swift
 │       ├── VideoRepository.swift
-│       └── VocabularyRepository.swift
+│       ├── VocabularyRepository.swift
+│       └── VideoBookmarkRepository.swift
 ├── Features/
 │   ├── Home/              # 首页视频列表
 │   ├── VideoPlayer/       # 视频播放 + 字幕叠加
+│   │   └── Subviews/      # 播放器子组件
 │   ├── Transcription/     # 转录页面 + 任务列表
 │   ├── Translation/       # 翻译页面 + 任务列表
 │   ├── Vocabulary/        # 生词本列表/详情
@@ -87,6 +92,8 @@ SpeakingEnglish/
 │   ├── DocumentPicker.swift
 │   ├── SubtitleListView.swift
 │   ├── BilingualTextParser.swift
+│   ├── CachedAsyncImage.swift     # 带缓存的异步图片
+│   ├── TimeFormatter.swift        # 时间格式化工具
 │   ├── ToastView.swift
 │   └── Extensions/
 ├── Resources/

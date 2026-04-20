@@ -28,20 +28,20 @@ class VocabularyService {
         return entry
     }
 
-    func getAllWords() throws -> [VocabularyEntry] {
-        return try repository.getAll()
+    func getAllWords(limit: Int? = nil, offset: Int? = nil) throws -> [VocabularyEntry] {
+        return try repository.getAll(limit: limit, offset: offset)
     }
 
     func getWord(byId id: UUID) throws -> VocabularyEntry? {
         return try repository.getById(id)
     }
 
-    func getDueForReview() throws -> [VocabularyEntry] {
-        return try repository.getDueForReview()
+    func getDueForReview(limit: Int? = nil, offset: Int? = nil) throws -> [VocabularyEntry] {
+        return try repository.getDueForReview(limit: limit, offset: offset)
     }
 
-    func search(_ keyword: String) throws -> [VocabularyEntry] {
-        return try repository.search(keyword)
+    func search(_ keyword: String, limit: Int? = nil, offset: Int? = nil) throws -> [VocabularyEntry] {
+        return try repository.search(keyword, limit: limit, offset: offset)
     }
 
     func deleteWord(byId id: UUID) throws {
@@ -72,18 +72,19 @@ class VocabularyService {
     }
 
     func getStatistics() throws -> LearningStatistics {
-        let allWords = try getAllWords()
-        let dueWords = try getDueForReview()
+        let totalCount = try repository.getTotalCount()
+        let dueCount = try repository.getDueCount()
 
         let today = Calendar.current.startOfDay(for: Date())
+        let allWords = try repository.getAll(limit: nil, offset: nil)
         let reviewedToday = allWords.filter { entry in
             guard let lastReview = entry.lastReviewDate else { return false }
             return Calendar.current.isDate(lastReview, inSameDayAs: today)
         }
 
         return LearningStatistics(
-            totalWords: allWords.count,
-            wordsToReview: dueWords.count,
+            totalWords: totalCount,
+            wordsToReview: dueCount,
             reviewedToday: reviewedToday.count
         )
     }

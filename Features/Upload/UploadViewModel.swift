@@ -1,6 +1,7 @@
 import SwiftUI
 import AVFoundation
 
+@MainActor
 class UploadViewModel: ObservableObject {
     @Published var selectedVideoURL: URL?
     @Published var selectedSubtitleURL: URL?
@@ -52,7 +53,6 @@ class UploadViewModel: ObservableObject {
     }
 
     /// 翻译字幕
-    @MainActor
     func translateSubtitle() async {
         guard let subtitleURL = selectedSubtitleURL else { return }
 
@@ -111,66 +111,57 @@ class UploadViewModel: ObservableObject {
         }
     }
 
-    func upload(completion: @escaping (Bool) -> Void) {
+    /// 上传视频 (async/await)
+    func upload() async -> Bool {
         guard let videoURL = selectedVideoURL else {
             errorMessage = "请选择视频文件"
-            completion(false)
-            return
+            return false
         }
 
         guard !videoTitle.isEmpty else {
             errorMessage = "请输入视频标题"
-            completion(false)
-            return
+            return false
         }
 
         isUploading = true
         errorMessage = nil
         uploadProgress = 0.1
 
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            guard let self = self else { return }
+        do {
+            uploadProgress = 0.3
+            let videoPath = try uploadService.copyVideoToDocuments(from: videoURL)
 
-            do {
-                DispatchQueue.main.async { self.uploadProgress = 0.3 }
-                let videoPath = try self.uploadService.copyVideoToDocuments(from: videoURL)
-
-                var subtitlePath: String?
-                if let subtitleURL = self.selectedSubtitleURL {
-                    subtitlePath = try self.uploadService.copySubtitleToDocuments(from: subtitleURL)
-                }
-
-                DispatchQueue.main.async { self.uploadProgress = 0.6 }
-                let thumbnailPath = self.uploadService.generateThumbnail(for: videoPath)
-                let duration = self.uploadService.getVideoDuration(for: videoPath)
-
-                DispatchQueue.main.async { self.uploadProgress = 0.8 }
-                let video = Video(
-                    title: self.videoTitle,
-                    localPath: videoPath,
-                    thumbnailPath: thumbnailPath,
-                    duration: duration,
-                    subtitlePath: subtitlePath
-                )
-
-                let repository = VideoRepository()
-                try repository.save(video)
-
-                DispatchQueue.main.async {
-                    self.uploadProgress = 1.0
-                    self.isUploading = false
-                    self.successMessage = "上传成功！"
-                    self.clearSelection()
-                    completion(true)
-                }
-
-            } catch {
-                DispatchQueue.main.async {
-                    self.isUploading = false
-                    self.errorMessage = "上传失败: \(error.localizedDescription)"
-                    completion(false)
-                }
+            var subtitlePath: String?
+            if let subtitleURL = selectedSubtitleURL {
+                subtitlePath = try uploadService.copySubtitleToDocuments(from: subtitleURL)
             }
+
+            uploadProgress = 0.6
+            let thumbnailPath = uploadService.generateThumbnail(for: videoPath)
+            let duration = uploadService.getVideoDuration(for: videoPath)
+
+            uploadProgress = 0.8
+            let video = Video(
+                title: videoTitle,
+                localPath: videoPath,
+                thumbnailPath: thumbnailPath,
+                duration: duration,
+                subtitlePath: subtitlePath
+            )
+
+            let repository = VideoRepository()
+            try repository.save(video)
+
+            uploadProgress = 1.0
+            isUploading = false
+            successMessage = "上传成功！"
+            clearSelection()
+            return true
+
+        } catch {
+            isUploading = false
+            errorMessage = "上传失败: \(error.localizedDescription)"
+            return false
         }
     }
 }

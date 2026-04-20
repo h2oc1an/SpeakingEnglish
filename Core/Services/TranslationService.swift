@@ -17,7 +17,8 @@ private enum TranslationConfig {
 class TranslationService {
     static let shared = TranslationService()
 
-    private var cache: [String: String] = [:]
+    // 线程安全的有界缓存 (NSCache 自动处理线程安全 and LRU 淘汰)
+    private let cache = NSCache<NSString, NSString>()
     private var authToken: String?
     private var tokenExpiry: Date?
     private var isRefreshingToken = false
@@ -28,6 +29,9 @@ class TranslationService {
         config.timeoutIntervalForRequest = 30
         config.timeoutIntervalForResource = 60
         self.session = URLSession(configuration: config)
+        // 限制缓存大小
+        cache.countLimit = 1000
+        cache.totalCostLimit = 10 * 1024 * 1024 // 10MB
         refreshToken()
     }
 
@@ -59,9 +63,9 @@ class TranslationService {
 
     /// 翻译文本
     func translate(_ text: String) async throws -> String {
-        // 检查缓存
-        if let cached = cache[text] {
-            return cached
+        // 检查缓存 (NSCache 是线程安全的)
+        if let cached = cache.object(forKey: text as NSString) {
+            return cached as String
         }
 
         // 获取 Token，带重试
@@ -127,7 +131,8 @@ class TranslationService {
             throw TranslationError.parseError
         }
 
-        cache[text] = translation
+        // 存入缓存 (NSCache 自动处理线程安全)
+        cache.setObject(translation as NSString, forKey: text as NSString)
         return translation
     }
 

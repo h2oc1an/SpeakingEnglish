@@ -6,6 +6,7 @@ class VideoService {
     static let shared = VideoService()
 
     private let videoRepository: VideoRepository
+    private let thumbnailService = ThumbnailService.shared
 
     private init() {
         self.videoRepository = VideoRepository()
@@ -32,8 +33,11 @@ class VideoService {
             let asset = AVAsset(url: videoURL)
             let duration = CMTimeGetSeconds(asset.duration)
 
-            // Generate thumbnail
-            let thumbnailPath = generateThumbnail(for: videoURL)
+            // Generate thumbnail using shared service
+            let thumbnailPath = thumbnailService.generateThumbnailSync(
+                for: videoURL.path,
+                saveToDirectory: FileManager.default.temporaryDirectory
+            )
 
             // Find matching subtitle file (same name, different extension)
             let subtitlePath = findSubtitlePath(for: videoName, in: videosDirectory)
@@ -41,7 +45,7 @@ class VideoService {
             let video = Video(
                 title: videoName.replacingOccurrences(of: "_", with: " ").capitalized,
                 localPath: videoURL.path,
-                thumbnailPath: thumbnailPath?.path,
+                thumbnailPath: thumbnailPath,
                 duration: duration,
                 subtitlePath: subtitlePath
             )
@@ -103,31 +107,5 @@ class VideoService {
 
         // 从数据库删除
         try videoRepository.delete(video.id)
-    }
-
-    func generateThumbnail(for videoURL: URL) -> URL? {
-        let asset = AVAsset(url: videoURL)
-        let imageGenerator = AVAssetImageGenerator(asset: asset)
-        imageGenerator.appliesPreferredTrackTransform = true
-
-        let time = CMTime(seconds: 1, preferredTimescale: 600)
-
-        do {
-            let cgImage = try imageGenerator.copyCGImage(at: time, actualTime: nil)
-            let uiImage = UIImage(cgImage: cgImage)
-
-            let thumbnailURL = FileManager.default.temporaryDirectory
-                .appendingPathComponent(UUID().uuidString)
-                .appendingPathExtension("jpg")
-
-            if let data = uiImage.jpegData(compressionQuality: 0.8) {
-                try data.write(to: thumbnailURL)
-                return thumbnailURL
-            }
-        } catch {
-            print("Thumbnail generation failed: \(error)")
-        }
-
-        return nil
     }
 }

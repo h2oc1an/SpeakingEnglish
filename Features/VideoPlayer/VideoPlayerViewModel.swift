@@ -2,6 +2,7 @@ import Foundation
 import AVFoundation
 import Combine
 
+@MainActor
 class VideoPlayerViewModel: ObservableObject {
     let video: Video
 
@@ -20,6 +21,7 @@ class VideoPlayerViewModel: ObservableObject {
 
     private var subtitles: [SubtitleEntry] = []
     private var timeObserver: Any?
+    private var didAddObserver = false
     private let srtParser = SRTSubtitleParser()
     private let assParser = ASSSubtitleParser()
     private let videoRepository = VideoRepository.shared
@@ -50,25 +52,18 @@ class VideoPlayerViewModel: ObservableObject {
         player.replaceCurrentItem(with: playerItem)
 
         // Get duration
-        Task { @MainActor in
-            if let durationTime = player.currentItem?.asset.duration {
-                self.duration = CMTimeGetSeconds(durationTime)
-            }
+        if let durationTime = player.currentItem?.asset.duration {
+            self.duration = CMTimeGetSeconds(durationTime)
         }
 
         // Load subtitles
         loadSubtitles()
 
-        // Add time observer
-        addTimeObserver()
-
-        // Observe playback state
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(playerDidFinishPlaying),
-            name: .AVPlayerItemDidPlayToEndTime,
-            object: playerItem
-        )
+        // Add time observer (only once)
+        if !didAddObserver {
+            addTimeObserver()
+            didAddObserver = true
+        }
 
         // Restore last playback position
         let lastPosition = videoRepository.getLastPlaybackPosition(for: video.id)
@@ -97,9 +92,11 @@ class VideoPlayerViewModel: ObservableObject {
     private func addTimeObserver() {
         let interval = CMTime(seconds: 0.1, preferredTimescale: 600)
         timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
-            guard let self = self else { return }
-            self.currentTime = CMTimeGetSeconds(time)
-            self.updateCurrentSubtitle()
+            Task { @MainActor in
+                guard let self = self else { return }
+                self.currentTime = CMTimeGetSeconds(time)
+                self.updateCurrentSubtitle()
+            }
         }
     }
 
@@ -118,7 +115,7 @@ class VideoPlayerViewModel: ObservableObject {
 
         // Look up in dictionary (async)
         DictionaryService.shared.lookup(cleanedWord) { [weak self] meaning in
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 self?.selectedWordMeaning = meaning
             }
         }
@@ -180,18 +177,13 @@ class VideoPlayerViewModel: ObservableObject {
         seek(to: newTime)
     }
 
-    @objc private func playerDidFinishPlaying() {
-        isPlaying = false
-        seek(to: 0)
-    }
-
     func cleanup() {
         if let observer = timeObserver {
             player.removeTimeObserver(observer)
+            timeObserver = nil
         }
         player.pause()
         player.replaceCurrentItem(with: nil)
-        NotificationCenter.default.removeObserver(self)
 
         // Save playback position
         videoRepository.saveLastPlaybackPosition(for: video.id, position: currentTime)

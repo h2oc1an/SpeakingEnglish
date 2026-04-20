@@ -19,7 +19,7 @@ struct HomeView: View {
 
                     // Video List
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("学习视频")
+                        Text("视频")
                             .font(.headline)
                             .padding(.horizontal)
 
@@ -62,7 +62,7 @@ struct HomeView: View {
                 }
                 .padding(.vertical)
             }
-            .navigationTitle("英语学习")
+            .navigationTitle("讲英格力士")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button(action: { showUploadSheet = true }) {
@@ -197,19 +197,9 @@ struct VideoCardView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            // Thumbnail
+            // Thumbnail with caching
             ZStack {
-                if let thumbnailPath = video.thumbnailPath,
-                   let uiImage = UIImage(contentsOfFile: thumbnailPath) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .aspectRatio(16/9, contentMode: .fill)
-                        .clipped()
-                } else {
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.3))
-                        .aspectRatio(16/9, contentMode: .fit)
-                }
+                CachedAsyncImage(path: video.thumbnailPath)
 
                 // Play button overlay
                 Image(systemName: "play.circle.fill")

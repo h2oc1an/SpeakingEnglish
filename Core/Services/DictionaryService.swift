@@ -5,7 +5,8 @@ import Foundation
 class DictionaryService {
     static let shared = DictionaryService()
 
-    private var cache: [String: String] = [:]
+    // 线程安全的有界缓存 (NSCache 自动处理线程安全 and LRU 淘汰)
+    private let cache = NSCache<NSString, NSString>()
     private var authToken: String?
     private var tokenExpiry: Date?
     private var isRefreshingToken = false
@@ -19,6 +20,9 @@ class DictionaryService {
         config.timeoutIntervalForRequest = 15
         config.timeoutIntervalForResource = 30
         self.session = URLSession(configuration: config)
+        // 限制缓存大小
+        cache.countLimit = 500
+        cache.totalCostLimit = 5 * 1024 * 1024 // 5MB
         refreshToken()
     }
 
@@ -80,9 +84,9 @@ class DictionaryService {
             return
         }
 
-        // Check cache first
-        if let cached = cache[cleanWord] {
-            completion(cached)
+        // Check cache first (NSCache is thread-safe)
+        if let cached = cache.object(forKey: cleanWord as NSString) {
+            completion(cached as String)
             return
         }
 
@@ -131,7 +135,7 @@ class DictionaryService {
             print("DictionaryService: Received data: \(String(data: data, encoding: .utf8)?.prefix(100) ?? "nil")")
 
             if let translation = self?.parseBingResponse(data) {
-                self?.cache[word] = translation
+                self?.cache.setObject(translation as NSString, forKey: word as NSString)
                 DispatchQueue.main.async {
                     completion(translation)
                 }
@@ -169,11 +173,11 @@ class DictionaryService {
     }
 
     func hasDefinition(for word: String) -> Bool {
-        return cache[word.lowercased()] != nil
+        return cache.object(forKey: word.lowercased() as NSString) != nil
     }
 
     func getCachedDefinition(_ word: String) -> String? {
-        return cache[word.lowercased()]
+        return cache.object(forKey: word.lowercased() as NSString) as String?
     }
 }
 

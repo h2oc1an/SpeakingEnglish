@@ -6,6 +6,7 @@ class UploadService {
     static let shared = UploadService()
 
     private let fileManager = FileManager.default
+    private let thumbnailService = ThumbnailService.shared
 
     private var documentsDirectory: URL {
         fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -54,31 +55,12 @@ class UploadService {
         return destinationURL.path
     }
 
-    /// 生成视频缩略图
+    /// 生成视频缩略图 (使用共享的 ThumbnailService)
     func generateThumbnail(for videoPath: String) -> String? {
-        let videoURL = URL(fileURLWithPath: videoPath)
-        let asset = AVAsset(url: videoURL)
-        let imageGenerator = AVAssetImageGenerator(asset: asset)
-        imageGenerator.appliesPreferredTrackTransform = true
-
-        let time = CMTime(seconds: 1, preferredTimescale: 600)
-
-        do {
-            let cgImage = try imageGenerator.copyCGImage(at: time, actualTime: nil)
-            let uiImage = UIImage(cgImage: cgImage)
-
-            let thumbnailFileName = UUID().uuidString + ".jpg"
-            let thumbnailURL = documentsDirectory.appendingPathComponent(thumbnailFileName)
-
-            if let data = uiImage.jpegData(compressionQuality: 0.8) {
-                try data.write(to: thumbnailURL)
-                return thumbnailURL.path
-            }
-        } catch {
-            print("Thumbnail generation failed: \(error)")
-        }
-
-        return nil
+        return thumbnailService.generateThumbnailSync(
+            for: videoPath,
+            saveToDirectory: documentsDirectory
+        )
     }
 
     /// 获取视频时长

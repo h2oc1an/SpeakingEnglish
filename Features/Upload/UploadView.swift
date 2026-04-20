@@ -143,8 +143,8 @@ struct UploadView: View {
 
                 ToolbarItem(placement: .confirmationAction) {
                     Button("上传") {
-                        viewModel.upload { success in
-                            if success {
+                        Task {
+                            if await viewModel.upload() {
                                 dismiss()
                             }
                         }
