@@ -2,8 +2,6 @@
   <img src="Resources/EUNOIA.png" alt="Eunoia" width="200"/>
 </p>
 
-<h1 align="center">Eunoia</h1>
-
 一款帮助用户通过视频学习多语言的应用，支持 **iOS** 和 **macOS 原生** 两个版本。
 
 > **Eunoia** 源自希腊语 εὔνοια，意为「美好的心意」。在古典修辞学中，它指演讲者与听众之间的善意联结——这也是语言学习的本质：用真诚的表达，跨越文化，建立理解。
