@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="Resources/logo.png" alt="Eunoia" width="200"/>
+  <img src="Resources/EUNOIA.png" alt="Eunoia" width="200"/>
 </p>
 
 <h1 align="center">Eunoia</h1>
